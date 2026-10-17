@@ -257,7 +257,83 @@ ESP32-S3 [Borne 8]   ─────> TFT [T_CS] (Seleção Touch)
 
 ### Ligação dos Módulos MOSFET LR7843 (Placa HW-532 Optoisolada)
 
+> [!TIP]
+> **Esquema Gráfico em Alta Resolução**:
+> Foi gerado um diagrama interativo em vetor e 100% em português. Você pode abri-lo no seu navegador a qualquer momento:
+> * 🔗 [Abrir Esquema Interativo no Navegador (HTML)](file:///d:/Users/Guilherme/Projetos/drybox/esquema_ligacao_mosfets.html)
+> * 🖼️ [Abrir Vetor SVG de Alta Resolução](file:///d:/Users/Guilherme/Projetos/drybox/esquema_ligacao_mosfets.svg)
+
 Você utilizará **2 módulos iguais** a este: um para o Aquecedor PTC e outro para as Ventoinhas de Purga. O optoacoplador **PC817** garante isolamento galvânico total, impedindo que ruídos ou picos dos 24V atinjam o ESP32-S3.
+
+```mermaid
+flowchart LR
+    subgraph FONTE["⚡ FONTE INDUSTRIAL 24V"]
+        F_POS["+V (+24V)"]
+        F_NEG["-V (GND)"]
+    end
+
+    subgraph FUSE["🛡️ PROTEÇÃO"]
+        FUSIVEL["Fusível 10A"]
+    end
+
+    subgraph ESP["🧠 ESP32-S3 (BORNES LADO DIREITO)"]
+        PIN6["Borne 6 (PWM PTC)"]
+        PIN7["Borne 7 (Sinal Purga)"]
+        PIN_G["Borne G (GND Comum)"]
+    end
+
+    subgraph MOS1["🔴 MÓDULO MOSFET 1 (PTC 150W)"]
+        direction TB
+        M1_PWM["Borne Verde: PWM"]
+        M1_GND["Borne Verde: GND"]
+        M1_VPOS["Borne Azul: V+"]
+        M1_VNEG["Borne Azul: V-"]
+        M1_OUT["Borne Azul: OUT"]
+    end
+
+    subgraph MOS2["🔵 MÓDULO MOSFET 2 (PURGA)"]
+        direction TB
+        M2_PWM["Borne Verde: PWM"]
+        M2_GND["Borne Verde: GND"]
+        M2_VPOS["Borne Azul: V+"]
+        M2_VNEG["Borne Azul: V-"]
+        M2_OUT["Borne Azul: OUT"]
+    end
+
+    subgraph CARGA1["🔥 AQUECEDOR PTC 150W"]
+        TF["Termofusível 75°C"]
+        PTC_RES["Resistência Cerâmica (Fios Grossos)"]
+        PTC_FAN["Ventoinha Interna (Fios Finos)"]
+    end
+
+    subgraph CARGA2["💨 VENTOINHAS DE PURGA"]
+        FAN1["Cooler 1 (Admissão)"]
+        FAN2["Cooler 2 (Exaustão)"]
+    end
+
+    F_POS ==> FUSIVEL
+    FUSIVEL ==> M1_VPOS
+    FUSIVEL ==> M2_VPOS
+    FUSIVEL ==> TF
+    TF ==> PTC_RES
+    FUSIVEL -. 24V direto .-> PTC_FAN
+    FUSIVEL ==> FAN1
+    FUSIVEL ==> FAN2
+
+    F_NEG ==> M1_VNEG
+    F_NEG ==> M2_VNEG
+    F_NEG ==> PIN_G
+    F_NEG -. GND direto .-> PTC_FAN
+
+    PIN6 -->|Sinal PWM 3.3V| M1_PWM
+    PIN7 -->|Sinal ON/OFF 3.3V| M2_PWM
+    PIN_G --> M1_GND
+    PIN_G --> M2_GND
+
+    PTC_RES -->|Retorno Negativo| M1_OUT
+    FAN1 -->|Retorno Negativo| M2_OUT
+    FAN2 -->|Retorno Negativo| M2_OUT
+```
 
 ```
        [ BORNE AZUL (POTÊNCIA 24V) ]             [ BORNE VERDE (CONTROLE 3.3V) ]
