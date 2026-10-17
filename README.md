@@ -1,6 +1,6 @@
 # Manual Técnico de Construção: Caixa Secadora Inteligente de Filamentos (60 Litros)
 
-Este documento contém a especificação técnica completa, os fundamentos termodinâmicos, os esquemas elétricos, o guia mecânico passo a passo e o roteiro de comissionamento para a montagem de uma estufa secadora de filamentos 3D de alta capacidade (60L) baseada em microcontrolador **ESP32**.
+Este documento contém a especificação técnica completa, os fundamentos termodinâmicos, os esquemas elétricos, o guia mecânico passo a passo e o roteiro de comissionamento para a montagem de uma estufa secadora de filamentos 3D de alta capacidade (60L) baseada em microcontrolador **ESP32-S3 (WROOM-1 N16R8)**.
 
 ---
 
@@ -85,7 +85,7 @@ Quando o ciclo termina e a resistência desliga, o ar interno começa a resfriar
 | **Driver de Potência** | Módulo MOSFET Optoacoplado (Recomendado: LR7843 ou AOD4184) | 1 un. | • [Opção 1 - AliExpress](https://pt.aliexpress.com/item/1005007204205450.html)<br>• [Opção 2 - AliExpress](https://pt.aliexpress.com/item/1005007051116380.html)<br>• Busca ML: `modulo mosfet lr7843 pwm isolado arduino` |
 | **Driver Ventoinhas** | Módulo MOSFET auxiliar (Pode usar o mesmo LR7843 acima) | 1 un. | Utilize o mesmo link do LR7843 (compre kit com 2 un.) |
 | **Ventoinhas de Purga** | Axiais 24V DC (60×60×15mm ou 40×40×10mm) | 2 un. | • [Opção 1 - AliExpress](https://pt.aliexpress.com/item/1005006306536871.html)<br>• [Opção 2 - AliExpress](https://pt.aliexpress.com/item/1005011825000369.html)<br>• Busca ML: `cooler 24v 60mm brushless` |
-| **Microcontrolador** | ESP32 DevKit V1 (30 ou 38 pinos) | 1 un. | • [Opção 1 - AliExpress](https://pt.aliexpress.com/item/1005008790513258.html)<br>• [Opção 2 - AliExpress](https://pt.aliexpress.com/item/1005011824848241.html)<br>• Busca ML: `esp32 nodemcu devkit v1` |
+| **Microcontrolador** | ESP32-S3-WROOM-1 N16R8 (44 pinos com bornes de parafuso) | 1 un. | Placa com bornes verdes de parafuso (16MB Flash / 8MB PSRAM OPI) |
 | **Regulador Step-Down** | Módulo Buck DC-DC (LM2596 ou MP1584EN) | 1 un. | • [Opção 1 - AliExpress](https://pt.aliexpress.com/item/1005007724327389.html)<br>• [Opção 2 - AliExpress](https://pt.aliexpress.com/item/1005007055625007.html)<br>• Busca ML: `modulo regulador step down lm2596` |
 | **Sensores de Temperatura e Umidade** | Módulo SHT31-D I2C (Sensirion de alta precisão) | 2 un. | • [Opção 1 - AliExpress](https://pt.aliexpress.com/item/1005006459279216.html)<br>• [Opção 2 - AliExpress](https://pt.aliexpress.com/item/1005012475175587.html)<br>• Busca ML: `modulo sensor sht31 i2c` |
 | **Display TFT Touch** | LCD 2.4" ou 2.8" SPI (320×240) ILI9341 + Touch XPT2046 | 1 un. | • [Opção 1 - AliExpress (Selecione "2.4 inch With Touch")](https://pt.aliexpress.com/item/33015586094.html)<br>• Busca ML: `display tft 2.4 spi ili9341 touch` |
@@ -106,7 +106,13 @@ Quando o ciclo termina e a resistência desliga, o ar interno começa a resfriar
 ### Medidas de Segurança Obrigatórias
 
 > [!CAUTION]
-> **1. AJUSTE DO STEP-DOWN ANTES DE LIGAR O ESP32**: Conecte a fonte de 24V na entrada do regulador Buck (LM2596/MP1584EN). Com um multímetro na saída, gire o trimpot até estabilizar exatamente em **5,00V**. Apenas depois desse ajuste conecte a saída ao pino `VIN` do ESP32. Ligar 24V diretamente no ESP32 causará queima instantânea.
+> **1. AJUSTE DO STEP-DOWN ANTES DE LIGAR O ESP32-S3**: 
+> Conecte a fonte de 24V na entrada do regulador (`+UIN` e `-UIN`). 
+> Se estiver usando o modelo **LM2596 com voltímetro digital integrado**:
+> * Pressione o botão **`S1`** até que o LED indicador **`OUT`** acenda (mostrando a tensão de saída).
+> * Com uma chave de fenda pequena, gire o parafuso de latão do trimpot azul (`W103`) no sentido anti-horário até que o display marque exatamente **`5.00V`**.
+> * *(Dica: Faça uma contraprova com um multímetro nos bornes `VOUT+` e `VOUT-`)*.
+> * **Apenas após certificar-se de que a saída está em 5.00V**, conecte os fios de saída ao borne **`5V`** e **`G`** do ESP32-S3. Ligar 24V diretamente no ESP32-S3 causará queima instantânea.
 
 > [!DANGER]
 > **2. POSICIONAMENTO DO TERMOFUSÍVEL (75°C)**: O termofusível mecânico de 75°C deve ser encostado diretamente na carcaça de alumínio do aquecedor cerâmico PTC e preso firmemente com fita Kapton. Ele deve ser ligado em série na perna positiva (+24V) da resistência. Se o microcontrolador travar em nível alto ou o MOSFET entrar em curto-circuito, o termofusível desarmará mecanicamente, cortando a energia e eliminando qualquer risco de incêndio.
@@ -116,35 +122,76 @@ Quando o ciclo termina e a resistência desliga, o ar interno começa a resfriar
 
 ---
 
-### Mapeamento de Pinos do ESP32
+### Mapeamento de Pinos do ESP32-S3 (Placa de Expansão com Bornes)
 
-| Pino ESP32 | Função | Dispositivo Conectado | Observações |
-| :---: | :---: | :---: | :--- |
-| **VIN** | Alimentação | Saída OUT+ do Step-Down | Tensão regulada rigorosamente em **5.00V** |
-| **GND** | Referência | Barramento de Terra Comum | GND unificado de todo o sistema |
-| **3V3** | Lógica | Sensores SHT31, VCC e LED do TFT | Alimentação lógica 3.3V de dados |
-| **GPIO 23** | SPI MOSI | TFT SDI (MOSI) + Touch T_DIN | Barramento de dados mestre SPI |
-| **GPIO 19** | SPI MISO | TFT SDO (MISO) + Touch T_DO | Barramento de retorno de dados do Touch |
-| **GPIO 18** | SPI SCK | TFT SCK + Touch T_CLK | Linha de clock do barramento SPI |
-| **GPIO 5** | SPI CS | TFT CS (Chip Select Display) | Habilita comandos para o controlador ILI9341 |
-| **GPIO 4** | Controle | TFT DC / RS (Data / Command) | Seleção de modo Comando ou Dados gráficos |
-| **GPIO 16** | Reset | TFT RESET (ou EN/RST) | Reset por hardware do display |
-| **GPIO 27** | SPI CS | Touch T_CS (Chip Select Touch) | Habilita leitura do controlador XPT2046 |
-| **GPIO 21** | I2C SDA | SHT31 Interno (0x44) + SHT31 Ext (0x45) | Linha compartilhada de dados I2C |
-| **GPIO 22** | I2C SCL | SHT31 Interno (0x44) + SHT31 Ext (0x45) | Linha compartilhada de clock I2C |
-| **GPIO 25** | Saída PWM | Módulo MOSFET do Aquecedor PTC | Modulação térmica PID a 1 kHz (LEDC) |
-| **GPIO 26** | Saída Digital | Módulo MOSFET das Ventoinhas Purga | Acionamento ON/OFF da purga por rajadas |
+> [!TIP]
+> **Organização Otimizada nos Bornes do Lado Direito**:
+> Todas as conexões de atuadores, barramento I2C dos sensores e barramento SPI do display/touch foram mapeadas exclusivamente na **régua de bornes do lado direito** (pinos 4 a 14, 5V, GND e 3.3V). Isso simplifica o chicote de fios e mantém os bornes firmemente parafusados.
+
+> [!WARNING]
+> **ATENÇÃO - Pinos Internos da Memória PSRAM (N16R8)**:
+> O modelo **N16R8** utiliza memórias Flash e PSRAM Octal (OPI). Os pinos **GPIO 35, 36 e 37** (marcados na régua esquerda de bornes) são conectados internamente à PSRAM. **NÃO conecte nada aos bornes 35, 36 ou 37**, pois causará travamento imediato e bootloop.
+
+| Pino ESP32-S3 | Borne na Placa | Função | Dispositivo Conectado | Observações |
+| :---: | :---: | :---: | :---: | :--- |
+| **5V** | `5V` (Topo Direito) | Alimentação | Saída OUT+ do Step-Down | Tensão regulada rigorosamente em **5.00V** |
+| **GND** | `G` (Topo Direito) | Referência | Barramento de Terra Comum | GND unificado de todo o sistema |
+| **3.3V** | `3.3` (Base Direita) | Lógica | Sensores SHT31, VCC e LED do TFT | Alimentação lógica 3.3V de dados e backlight |
+| **GPIO 4** | Borne `4` | I2C SDA | SHT31 Interno (0x44) + SHT31 Ext (0x45) | Linha compartilhada de dados I2C |
+| **GPIO 5** | Borne `5` | I2C SCL | SHT31 Interno (0x44) + SHT31 Ext (0x45) | Linha compartilhada de clock I2C |
+| **GPIO 6** | Borne `6` | Saída PWM | Módulo MOSFET do Aquecedor PTC | Modulação térmica PID a 1 kHz (LEDC) |
+| **GPIO 7** | Borne `7` | Saída Digital | Módulo MOSFET das Ventoinhas Purga | Acionamento ON/OFF da purga por rajadas |
+| **GPIO 8** | Borne `8` | SPI CS | Touch T_CS (Chip Select Touch) | Habilita leitura do controlador XPT2046 |
+| **GPIO 9** | Borne `9` | Controle | TFT DC / RS (Data / Command) | Seleção de modo Comando ou Dados gráficos |
+| **GPIO 10** | Borne `10` | SPI CS | TFT CS (Chip Select Display) | Habilita comandos para o controlador ILI9341 |
+| **GPIO 11** | Borne `11` | SPI MOSI | TFT SDI (MOSI) + Touch T_DIN | Barramento de dados mestre SPI (FSPI nativo) |
+| **GPIO 12** | Borne `12` | SPI SCK | TFT SCK + Touch T_CLK | Linha de clock do barramento SPI (FSPI nativo) |
+| **GPIO 13** | Borne `13` | SPI MISO | TFT SDO (MISO) + Touch T_DO | Barramento de retorno de dados Touch (FSPI nativo) |
+| **GPIO 14** | Borne `14` ou `RST` | Reset | TFT RESET (ou EN/RST) | Reset por hardware do display |
 
 #### Barramentos de Comunicação:
-* **Barramento I2C (GPIO 21 SDA / GPIO 22 SCL)**:
+* **Barramento I2C (GPIO 4 SDA / GPIO 5 SCL - Bornes 4 e 5)**:
   - **SHT31 Interno**: Pino `ADDR` no **GND** $\rightarrow$ Endereço `0x44`.
   - **SHT31 Externo**: Pino `ADDR` no **3.3V** $\rightarrow$ Endereço `0x45`.
-* **Barramento SPI Hardware VSPI (GPIO 23 MOSI / 19 MISO / 18 SCK)**:
-  - **Display ILI9341**: CS no `GPIO 5`, DC no `GPIO 4`, RST no `GPIO 16`.
-  - **Touch XPT2046**: CS no `GPIO 27` (compartilha MOSI, MISO e SCK com o display).
-  - **Backlight (LED)**: Conecte ao pino **3.3V** (ou via trimpot para ajuste de brilho).
+* **Barramento SPI Hardware FSPI (GPIO 11 MOSI / 13 MISO / 12 SCK - Bornes 11, 13 e 12)**:
+  - **Display ILI9341**: CS no `GPIO 10` (Borne 10), DC no `GPIO 9` (Borne 9), RST no `GPIO 14` (Borne 14 ou RST).
+  - **Touch XPT2046**: CS no `GPIO 8` (Borne 8) - compartilha MOSI, MISO e SCK com o display.
 
 ---
+
+### Conexão do Módulo Display TFT 2.4" Touch (Placa Vermelha ILI9341 + XPT2046)
+
+> [!CAUTION]
+> **PERIGO DE QUEIMA DO BACKLIGHT (Pino `LED`)**:
+> O pino **`LED`** da tela alimenta a fita de LEDs de iluminação traseira (Backlight). Conecte-o **rigorosamente ao borne `3.3` (3.3V)**. **NUNCA ligue o pino `LED` no borne `5V`**, pois a sobretensão/sobrecorrente queimará os LEDs do display em poucos minutos de uso contínuo.
+
+> [!NOTE]
+> **Esclarecimento sobre Driver ILI9341 vs ILI9488 no anúncio**:
+> Muitos anúncios no AliExpress/Mercado Livre agrupam vários modelos no mesmo título (*"ILI9341 ILI9488"*). Na versão de **2.4 polegadas**, o controlador é invariavelmente o **ILI9341 (320×240)** com touch **XPT2046**. O driver ILI9488 só é usado nas telas maiores de 3.5 polegadas (480×320).
+
+| Pino impresso na Tela (PCB Vermelha) | Função do Pino | Borne no ESP32-S3 (Lado Direito) | Instruções Práticas |
+| :--- | :--- | :---: | :--- |
+| **VCC** | Alimentação lógica | **`5V`** ou **`3.3`** | A tela possui regulador LDO onboard |
+| **GND** | Terra Comum | **`G`** (ao lado do 5V) | Polo negativo do circuito |
+| **CS** | Chip Select Display | **Borne `10`** | Habilita comandos para o ILI9341 |
+| **RESET** | Reset do Display | **Borne `14`** ou **`RST`** | Reinicialização por hardware |
+| **DC** (ou **RS**) | Data / Command | **Borne `9`** | Alterna entre comando gráfico e dados |
+| **SDI (MOSI)** | Dados SPI (Entrada) | **Borne `11`** | Junte com o fio `T_DIN` no mesmo borne |
+| **SCK** | Clock SPI | **Borne `12`** | Junte com o fio `T_CLK` no mesmo borne |
+| **LED** | Iluminação Backlight | **Borne `3.3`** | ⚠️ **Somente 3.3V!** Risco de queima em 5V |
+| **SDO (MISO)** | Dados SPI (Retorno) | **Borne `13`** | Junte com o fio `T_DO` no mesmo borne |
+| **T_CLK** | Clock do Touch | **Borne `12`** | Parafusado no mesmo borne do `SCK` |
+| **T_CS** | Chip Select Touch | **Borne `8`** | Habilita leitura do toque XPT2046 |
+| **T_DIN** | Dados Touch (In) | **Borne `11`** | Parafusado no mesmo borne do `SDI` |
+| **T_DO** | Dados Touch (Out) | **Borne `13`** | Parafusado no mesmo borne do `SDO` |
+| **T_IRQ** | Interrupção Touch | **NÃO CONECTAR (Deixar Vazio)** | O firmware lê o touch por polling |
+
+> [!TIP]
+> **Dica de Fiação nos Bornes de Parafuso**:
+> Como o display e o touch compartilham as linhas SPI de dados e clock, torça as pontas dos fios desencapados em pares antes de parafusar no borne:
+> * `SCK` + `T_CLK` juntos no **Borne 12**
+> * `SDI` + `T_DIN` juntos no **Borne 11**
+> * `SDO` + `T_DO` juntos no **Borne 13**
 
 ### Diagrama Esquemático em Blocos
 
@@ -160,43 +207,86 @@ Quando o ciclo termina e a resistência desliga, o ar interno começa a resfriar
  └── (-) ── [ BARRAMENTO GND COMUM ] ┬──> Step-Down [IN-]
                                      ├──> MOSFET PTC [DC-]
                                      ├──> MOSFET Purga [DC-]
-                                     └──> ESP32 [GND]
+                                     └──> ESP32-S3 [GND / Borne G]
 
 ======================= LINHA REGULADA (5.0V DC) =========================
 [ STEP-DOWN ]
  ├── OUT- ──> BARRAMENTO GND COMUM
- └── OUT+ ──> ESP32 [VIN] (Alimentação principal da placa)
+ └── OUT+ ──> ESP32-S3 [Borne 5V] (Alimentação principal da placa)
 
 ======================= COMUTAÇÃO LOW-SIDE (MOSFETS) =====================
-• Resistência PTC (-)   ──> Borne LOAD(-) do Módulo MOSFET PTC (Acionado via GPIO 25)
-• Ventoinhas Purga (-) ──> Borne LOAD(-) do Módulo MOSFET Purga (Acionado via GPIO 26)
+• Resistência PTC (-)   ──> Borne LOAD(-) do Módulo MOSFET PTC (Acionado via Borne 6 / GPIO 6)
+• Ventoinhas Purga (-) ──> Borne LOAD(-) do Módulo MOSFET Purga (Acionado via Borne 7 / GPIO 7)
 
 ======================= BARRAMENTO I2C DOS SENSORES (3.3V) ===============
-ESP32 [3V3]     ──┬──> SHT31 Interno [VIN]
-                  └──> SHT31 Externo [VIN]
-ESP32 [GND]     ──┬──> SHT31 Interno [GND]
-                  └──> SHT31 Externo [GND]
-ESP32 [GPIO 21] ──┬──> SHT31 Interno [SDA]
-                  └──> SHT31 Externo [SDA]
-ESP32 [GPIO 22] ──┬──> SHT31 Interno [SCL]
-                  └──> SHT31 Externo [SCL]
+ESP32-S3 [Borne 3.3] ──┬──> SHT31 Interno [VIN]
+                       └──> SHT31 Externo [VIN]
+ESP32-S3 [Borne G]   ──┬──> SHT31 Interno [GND]
+                       └──> SHT31 Externo [GND]
+ESP32-S3 [Borne 4]   ──┬──> SHT31 Interno [SDA]
+                       └──> SHT31 Externo [SDA]
+ESP32-S3 [Borne 5]   ──┬──> SHT31 Interno [SCL]
+                       └──> SHT31 Externo [SCL]
 
 ======================= BARRAMENTO SPI - DISPLAY TFT & TOUCH =============
-ESP32 [3V3]     ──┬──> TFT [VCC]
-                  └──> TFT [LED] (Backlight)
-ESP32 [GND]     ──┬──> TFT [GND]
-                  └──> BARRAMENTO GND COMUM
-ESP32 [GPIO 23] ──┬──> TFT [MOSI / SDI]
-                  └──> TFT [T_DIN] (Dados Touch)
-ESP32 [GPIO 19] ──┬──> TFT [MISO / SDO]
-                  └──> TFT [T_DO] (Leitura Touch)
-ESP32 [GPIO 18] ──┬──> TFT [SCK / CLK]
-                  └──> TFT [T_CLK] (Clock Touch)
-ESP32 [GPIO 5]  ─────> TFT [CS] (Seleção Display)
-ESP32 [GPIO 4]  ─────> TFT [DC / RS] (Comando/Dados)
-ESP32 [GPIO 16] ─────> TFT [RESET]
-ESP32 [GPIO 27] ─────> TFT [T_CS] (Seleção Touch)
+ESP32-S3 [Borne 3.3] ──┬──> TFT [VCC] (ou no Borne 5V)
+                       └──> TFT [LED] (Backlight - EXCLUSIVAMENTE 3.3V)
+ESP32-S3 [Borne G]   ──┬──> TFT [GND]
+                       └──> BARRAMENTO GND COMUM
+ESP32-S3 [Borne 11]  ──┬──> TFT [MOSI / SDI]
+                       └──> TFT [T_DIN] (Dados Touch)
+ESP32-S3 [Borne 13]  ──┬──> TFT [MISO / SDO]
+                       └──> TFT [T_DO] (Leitura Touch)
+ESP32-S3 [Borne 12]  ──┬──> TFT [SCK / CLK]
+                       └──> TFT [T_CLK] (Clock Touch)
+ESP32-S3 [Borne 10]  ─────> TFT [CS] (Seleção Display)
+ESP32-S3 [Borne 9]   ─────> TFT [DC / RS] (Comando/Dados)
+ESP32-S3 [Borne 14]  ─────> TFT [RESET] (ou Borne RST)
+ESP32-S3 [Borne 8]   ─────> TFT [T_CS] (Seleção Touch)
+• TFT [T_IRQ]        ─────> NÃO CONECTAR (Deixar Desconectado)
 ```
+
+> [!NOTE]
+> **Instalação Prática do Porta-Fusível Chicote**:
+> O porta-fusível impermeável vem como um laço de fio vermelho contínuo. Corte o fio ao meio com um alicate para obter as duas pontas:
+> * **Ponta 1:** Parafuse diretamente no borne **`+V` da Fonte de 24V**.
+> * **Ponta 2:** Conecte à linha positiva que alimenta o Termofusível 75°C, as Ventoinhas e a entrada `+UIN` do Step-Down.
+> * Encaixe o fusível vermelho de **10A** no slot e trave a capinha emborrachada de proteção.
+
+---
+
+### Ligação dos Módulos MOSFET LR7843 (Placa HW-532 Optoisolada)
+
+Você utilizará **2 módulos iguais** a este: um para o Aquecedor PTC e outro para as Ventoinhas de Purga. O optoacoplador **PC817** garante isolamento galvânico total, impedindo que ruídos ou picos dos 24V atinjam o ESP32-S3.
+
+```
+       [ BORNE AZUL (POTÊNCIA 24V) ]             [ BORNE VERDE (CONTROLE 3.3V) ]
+     ┌────────────────────────────────┐         ┌──────────────────────────────┐
+     │  V+   ──> +24V da Fonte        │         │  PWM ──> Borne GPIO ESP32-S3 │
+     │  V-   ──> GND da Fonte (24V)   │ [LR7843]│                              │
+     │  OUT  ──> Negativo (-) da Carga│ [PC817] │  GND ──> Borne G (Terra Comum│
+     └────────────────────────────────┘         └──────────────────────────────┘
+```
+
+#### Módulo 1: Aquecedor PTC (150W)
+| Borne no Módulo HW-532 | Identificação | Conexão Física |
+| :--- | :---: | :--- |
+| **Borne Verde (Entrada)** | `PWM` | Fio até o **Borne `6`** do ESP32-S3 (Sinal PWM do PID) |
+| **Borne Verde (Entrada)** | `GND` | Fio até o **Borne `G`** do ESP32-S3 (GND de sinal) |
+| **Borne Azul (Potência)** | `V+` (ou `+`) | Linha **+24V** da Fonte (após o Fusível Lâmina 10A) |
+| **Borne Azul (Potência)** | `V-` (ou `-`) | Linha **GND Negativo** da Fonte de 24V |
+| **Borne Azul (Potência)** | `OUT` (ou `LOAD-`) | **Fio grosso negativo (-)** da Resistência Cerâmica do PTC |
+*Nota: O fio grosso positivo (+) do PTC vai ligado ao +24V passando antes pelo Termofusível de 75°C.*
+
+#### Módulo 2: Ventoinhas de Purga (2x Coolers 24V em Paralelo)
+| Borne no Módulo HW-532 | Identificação | Conexão Física |
+| :--- | :---: | :--- |
+| **Borne Verde (Entrada)** | `PWM` | Fio até o **Borne `7`** do ESP32-S3 (Sinal Digital ON/OFF) |
+| **Borne Verde (Entrada)** | `GND` | Fio até o **Borne `G`** do ESP32-S3 (GND de sinal) |
+| **Borne Azul (Potência)** | `V+` (ou `+`) | Linha **+24V** da Fonte |
+| **Borne Azul (Potência)** | `V-` (ou `-`) | Linha **GND Negativo** da Fonte de 24V |
+| **Borne Azul (Potência)** | `OUT` (ou `LOAD-`) | **Fios pretos negativos (-)** das duas ventoinhas de purga unidas |
+*Nota: Os fios vermelhos positivos (+) das duas ventoinhas de purga vão ligados ao +24V.*
 
 ---
 
@@ -208,11 +298,27 @@ ESP32 [GPIO 27] ─────> TFT [T_CS] (Seleção Touch)
    - **Admissão (ar fresco)**: Lateral esquerda, a 5 cm de distância do fundo da caixa.
    - **Exaustão (ar quente/úmido)**: Lateral direita, a 5 cm abaixo da borda superior. Esse posicionamento cria fluxo diagonal em convecção cruzada por todo o volume da câmara.
 
-### Etapa 2: Montagem do Bloco PTC e Proteção Térmica
-1. **Chapa Defletora de Sacrifício**: Nunca aparafuse o aquecedor cerâmico diretamente no isopor. Fixe o bloco PTC sobre uma chapa de alumínio de 150×150 mm utilizando **4 espaçadores sextavados M3 de 10 mm**. O vão de ar entre o aquecedor e a chapa dissipa o calor concentrado.
+### Etapa 2: Montagem do Bloco PTC (Insulated 24V 150W) e Proteção Térmica
+
+> [!IMPORTANT]
+> **Identificação dos 4 Fios do Aquecedor PTC**:
+> Este modelo isolado com ventoinha integrada possui 4 fios que saem do mesmo bloco. É crucial separá-los corretamente:
+> * **2 Fios Finos (Vermelho e Preto)**: Alimentação da **Ventoinha 24V** interna.
+>   * **Ligação**: Ligue diretamente na linha **+24V permanente da fonte** e no **GND Comum**. A ventoinha do PTC deve girar continuamente para não queimar a resistência cerâmica nem deformar o corpo plástico.
+> * **2 Fios Grossos (Silicone térmico com espaguete)**: Terminais da **Resistência Cerâmica PTC (150W)**.
+>   * **Fio Positivo (+)**: Ligue ao **+24V após passar pelo Termofusível de 75°C**.
+>   * **Fio Negativo (-)**: Ligue ao borne **`LOAD(-)` do Módulo MOSFET PTC** (chaveado via Borne 6 / GPIO 6 do ESP32-S3).
+
+1. **Chapa Defletora de Sacrifício**: Nunca aparafuse o aquecedor cerâmico diretamente no isopor. Fixe o bloco PTC sobre uma chapa de alumínio de 150×150 mm utilizando as abas de fixação do aquecedor com **espaçadores sextavados M3 de 10 mm**. O vão de ar entre o aquecedor e a chapa dissipa o calor concentrado.
 2. **Fixação na Caixa**: Cole a chapa de alumínio no fundo da caixa utilizando cordões de silicone neutro de alta temperatura (silicone para juntas de motores).
 3. **Direção do Fluxo**: Aponte a saída de ar da ventoinha do PTC para o centro da caixa (em direção aos carretéis), **nunca soprando diretamente contra as paredes de isopor**.
-4. **Instalação do Termofusível**: Prenda o corpo do termofusível mecânico de 75°C em contato direto com uma aleta de alumínio do PTC usando fita Kapton.
+4. **Instalação do Termofusível (75°C)**: Prenda o corpo metálico do termofusível mecânico de 75°C na grade de saída de ar frontal ou encostado nas aletas internas de alumínio, fixando-o com voltas firmes de **fita Kapton**. Se a ventoinha falhar, o calor disparará o fusível e cortará os 24V da resistência.
+
+> [!CAUTION]
+> **Cuidado com Ferro de Solda no Termofusível (75°C)**:
+> O ferro de solda opera a mais de 300°C. Se encostar o ferro perto do corpo do fusível, o calor conduzirá pelo terminal e queimará a pastilha térmica interna antes do primeiro uso!
+> * **Método Preferencial (Sem Solda)**: Use conectores de emenda rápida, bornes WAGO ou tubinhos de crimpagem metálicos.
+> * **Se for soldar**: Mantenha pelo menos 2 a 3 cm de distância do corpo e segure o terminal com um **alicate de bico metálico** entre a solda e o fusível para dissipar o calor.
 
 ### Etapa 3: Instalação das Ventoinhas de Purga (Montagem Sanduíche)
 1. Para cada ventoinha, use parafusos longos M3 ou M4 transpassando a parede de EPS.
@@ -259,13 +365,20 @@ O código-fonte completo está em [`DryboxController/DryboxController.ino`](file
    const char* WIFI_SSID     = "SEU_WIFI_AQUI";
    const char* WIFI_PASSWORD = "SUA_SENHA_AQUI";
    ```
-7. Selecione a placa **ESP32 Dev Module**, conecte o cabo USB e clique no botão **Upload** (Seta para a direita).
+7. Configure as opções da placa em **Ferramentas**:
+   - **Board**: `ESP32S3 Dev Module`
+   - **Flash Size**: `16MB (128Mb)`
+   - **PSRAM**: `OPI PSRAM`
+   - **Flash Mode**: `QIO 80MHz`
+   - **USB CDC On Boot**: `Enabled`
+   - **Upload Speed**: `921600`
+8. Conecte o cabo USB-C (na porta UART ou USB) e clique em **Upload** (Seta para a direita).
 
-### Opção B: Upload via PlatformIO (VS Code)
+### Opção B: Upload via PlatformIO (VS Code - Recomendado)
 1. Instale o **Visual Studio Code** e a extensão **PlatformIO IDE**.
 2. Abra a pasta do projeto `D:\Users\Guilherme\Projetos\drybox`.
-3. O arquivo [`platformio.ini`](file:///D:/Users/Guilherme/Projetos/drybox/platformio.ini) já está configurado com todas as bibliotecas, dependências do Git e parâmetros do ESP32.
-4. Ajuste seu SSID e senha no arquivo `DryboxController/DryboxController.ino`.
+3. O arquivo [`platformio.ini`](file:///D:/Users/Guilherme/Projetos/drybox/platformio.ini) já está configurado sob medida para o **ESP32-S3 N16R8** com 16MB de Flash, 8MB de PSRAM OPI e todas as bibliotecas.
+4. Ajuste seu SSID e senha no arquivo [`DryboxController/DryboxController.ino`](file:///D:/Users/Guilherme/Projetos/drybox/DryboxController/DryboxController.ino).
 5. Clique no ícone de visto (**PlatformIO: Build**) e depois na seta (**PlatformIO: Upload**). As dependências serão baixadas automaticamente.
 
 ---
@@ -326,7 +439,7 @@ Execute este checklist rigorosamente antes de colocar filamentos na caixa:
 
 - [ ] **Teste 1 (Regulador de Tensão a Frio)**: Ligue a fonte de 24V na tomada conectada **somente** ao Step-Down. Use o multímetro nas saídas `OUT+` e `OUT-` e certifique-se de que a leitura é de **5,00V exatos**. Apenas então plugue no pino `VIN` do ESP32.
 - [ ] **Teste 2 (Barramento SPI do Display, Touch e I2C)**: Conecte o ESP32 via USB ao computador. Verifique se o display TFT 2.4" exibe os 3 arcos coloridos e os botões. Toque nos botões da tela para validar a resposta do touch XPT2046. Verifique no Monitor Serial se os sensores SHT31 interno (`0x44`) e externo (`0x45`) são detectados sem erros.
-- [ ] **Teste 3 (Validação dos MOSFETs com Cargas Baixas)**: Antes de ligar o aquecedor PTC de 150W, teste as saídas GPIO 25 (Aquecedor) e GPIO 26 (Purga) com uma carga baixa (como um cooler ou LED 24V) para conferir se os gates chaveiam adequadamente.
+- [ ] **Teste 3 (Validação dos MOSFETs com Cargas Baixas)**: Antes de ligar o aquecedor PTC de 150W, teste as saídas GPIO 6 (Borne 6 - Aquecedor) e GPIO 7 (Borne 7 - Purga) com uma carga baixa (como um cooler ou LED 24V) para conferir se os gates chaveiam adequadamente.
 - [ ] **Teste 4 (Rampa Térmica e Estabilidade do PID)**: Com o aquecedor montado na chapa defletora e a caixa fechada vazia, inicie um ciclo de teste. A temperatura deve subir gradualmente até 50°C em 15–20 minutos e estabilizar sem ultrapassar 52°C.
 - [ ] **Teste 5 (Teste do Failsafe de Software)**: O corte preventivo deve acionar imediatamente se a temperatura interna atingir 55°C ou se o sensor SHT31 for desconectado durante a operação.
 - [ ] **Teste 6 (Ciclo Real e Armazenamento a Vácuo)**: Realize a primeira secagem com carretéis. Ao término do tempo (ou em modo de manutenção), retire os carretéis mornos (35°C–45°C) e sele-os imediatamente em sacos com válvula a vácuo e sílica gel.

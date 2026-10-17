@@ -1,8 +1,8 @@
 /*
  * =====================================================================================
  *  PROJETO: ESTUFA SECADORA INTELIGENTE DE FILAMENTOS 60L (DRYBOX ESP32)
- *  Versão: 3.0 (Display TFT 2.4" Touch ILI9341, Gauges Gráficos, Web SPA e PID)
- *  Microcontrolador: ESP32 DevKit V1 (30 / 38 pinos)
+ *  Versão: 3.1 (ESP32-S3-WROOM-1 N16R8 44Pin, Display TFT 2.4" Touch ILI9341, Gauges, Web SPA e PID)
+ *  Microcontrolador: ESP32-S3 DevKitC-1 N16R8 (16MB Flash / 8MB PSRAM OPI)
  * =====================================================================================
  * 
  *  Funcionalidades:
@@ -41,10 +41,10 @@ const int   MQTT_PORT      = 1883;
 const char* MQTT_TOPIC_PUB = "drybox/telemetria";
 
 // =====================================================================================
-//  2. PINAGEM DO HARDWARE E PWM LEDC
+//  2. PINAGEM DO HARDWARE E PWM LEDC (ESP32-S3 N16R8 - BORNES LADO DIREITO)
 // =====================================================================================
-#define PIN_PWM_PTC        25   // GPIO 25: Sinal PWM (LEDC) para MOSFET do Aquecedor PTC
-#define PIN_PURGE_FAN      26   // GPIO 26: Sinal ON/OFF para MOSFET das Ventoinhas de Purga
+#define PIN_PWM_PTC        6    // GPIO 6 (Borne 6): Sinal PWM (LEDC) para MOSFET do Aquecedor PTC
+#define PIN_PURGE_FAN      7    // GPIO 7 (Borne 7): Sinal ON/OFF para MOSFET das Ventoinhas de Purga
 
 #define PWM_FREQ           1000 // 1 kHz para chaveamento silencioso e frio no MOSFET
 #define PWM_RESOLUTION     10   // Resolução de 10 bits (Duty Cycle de 0 a 1023)
@@ -53,14 +53,17 @@ const char* MQTT_TOPIC_PUB = "drybox/telemetria";
 // =====================================================================================
 //  3. DISPLAY TFT LCD 2.4"/2.8" SPI (ILI9341) E TOUCH (XPT2046)
 // =====================================================================================
-// Barramento SPI de Hardware (VSPI do ESP32):
-// MOSI -> GPIO 23 (TFT T_DIN / SDI)
-// MISO -> GPIO 19 (TFT SDO / T_DO)
-// SCK  -> GPIO 18 (TFT SCK / T_CLK)
-#define TFT_CS             5    // GPIO 5: Chip Select do Display TFT
-#define TFT_DC             4    // GPIO 4: Data/Command do Display TFT
-#define TFT_RST            16   // GPIO 16: Reset do Display TFT (ou conectar ao EN/RST)
-#define TOUCH_CS           27   // GPIO 27: Chip Select do Touch XPT2046
+// Barramento SPI de Hardware Nativo (FSPI do ESP32-S3):
+// MOSI -> GPIO 11 (Borne 11: TFT SDI / T_DIN)
+// MISO -> GPIO 13 (Borne 13: TFT SDO / T_DO)
+// SCK  -> GPIO 12 (Borne 12: TFT SCK / T_CLK)
+#define TFT_MOSI           11   // GPIO 11 (Borne 11): SPI MOSI
+#define TFT_MISO           13   // GPIO 13 (Borne 13): SPI MISO
+#define TFT_SCK            12   // GPIO 12 (Borne 12): SPI SCK
+#define TFT_CS             10   // GPIO 10 (Borne 10): Chip Select do Display TFT
+#define TFT_DC             9    // GPIO 9  (Borne 9):  Data/Command do Display TFT
+#define TFT_RST            14   // GPIO 14 (Borne 14): Reset do Display TFT (ou conectar ao Borne RST)
+#define TOUCH_CS           8    // GPIO 8  (Borne 8):  Chip Select do Touch XPT2046
 
 // Calibração do Touch Resistivo (ajuste conforme seu lote de display se necessário)
 #define TS_MINX            250
@@ -77,7 +80,9 @@ bool touchAtivo = false;
 #define COR_ARCO_FUNDO     0x2104   // Cinza escuro para a trilha inativa do arco
 #define COR_FUNDO_TELA     ILI9341_BLACK
 
-// Sensores de Umidade e Temperatura I2C (SDA = 21, SCL = 22)
+// Sensores de Umidade e Temperatura I2C (SDA = GPIO 4 / Borne 4, SCL = GPIO 5 / Borne 5)
+#define PIN_I2C_SDA        4    // GPIO 4 (Borne 4): Linha SDA dos sensores SHT31
+#define PIN_I2C_SCL        5    // GPIO 5 (Borne 5): Linha SCL dos sensores SHT31
 Adafruit_SHT31 sht_in  = Adafruit_SHT31(); // Endereço 0x44 (ADDR no GND)
 Adafruit_SHT31 sht_out = Adafruit_SHT31(); // Endereço 0x45 (ADDR no 3.3V)
 bool shtInOk = false;
@@ -923,11 +928,11 @@ void setup() {
     ledcAttachPin(PIN_PWM_PTC, PWM_CHANNEL);
   #endif
 
-  // Barramento I2C para os Sensores SHT31 (SDA = 21, SCL = 22)
-  Wire.begin(21, 22);
+  // Barramento I2C para os Sensores SHT31 (SDA = GPIO 4, SCL = GPIO 5)
+  Wire.begin(PIN_I2C_SDA, PIN_I2C_SCL);
 
-  // Inicializa Barramento SPI de Hardware e Display TFT 2.4"
-  SPI.begin(18, 19, 23, 5); // SCK, MISO, MOSI, SS
+  // Inicializa Barramento SPI de Hardware Nativo (FSPI) e Display TFT 2.4"
+  SPI.begin(TFT_SCK, TFT_MISO, TFT_MOSI, TFT_CS); // SCK, MISO, MOSI, SS
   tft.begin();
   tft.setRotation(1); // Modo Paisagem (320x240)
   tftAtivo = true;
