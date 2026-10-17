@@ -95,8 +95,10 @@ Quando o ciclo termina e a resistência desliga, o ar interno começa a resfriar
 | **Varão dos Carretéis** | Tubo rígido de alumínio ou PVC de 20 mm (~55 a 60 cm) | 1 barra | `tubo aluminio 20mm` |
 | **Fita Térmica** | Fita Kapton de Poliimida (15 mm a 20 mm) | 1 rolo | • [Opção 1 - AliExpress](https://pt.aliexpress.com/item/1005007855067893.html)<br>• [Opção 2 - AliExpress](https://pt.aliexpress.com/item/1005011642618631.html)<br>• Busca ML: `fita kapton isolamento alta temperatura` |
 | **Espaçadores** | Kit espaçadores sextavados M3 latão (10 mm) | 1 kit | • [Opção 1 - AliExpress (M3 Latão)](https://pt.aliexpress.com/item/1005005462128073.html)<br>• [Opção 2 - AliExpress (M3 Latão)](https://pt.aliexpress.com/item/1005006049595637.html)<br>• Busca ML: `kit espacador sextavado m3 latao` |
-| **Cabos de Potência** | Cabo de cobre flexível 1,5 mm² (24V / 6,5A) | 3 m | `cabo flexivel 1.5mm cobre vermelho e preto` |
-| **Cabos de Sinal** | Fios flexíveis 24–26 AWG / Jumpers fêmea-fêmea | 1 kit | `jumpers para protoboard femea femea` |
+| **Cabos de Potência 24V** | Cabo flexível 1,5 mm² (16 AWG) cobre puro (Vermelho e Preto) | 3 m cada | `cabo flexivel 1.5mm cobre vermelho e preto` |
+| **Cabos de Média Carga** | Cabo paralelo flexível 0,50 mm² (20 AWG) bicolor | 3 m | `cabo paralelo 0.50mm vermelho preto` / `cabo 20 awg` |
+| **Cabos de Sinal/Sensores**| Jumpers flexíveis 24–26 AWG (fêmea-fêmea e fêmea-macho, 20 cm) | 1 kit (40 un.) | `kit jumpers para protoboard femea femea 20cm` |
+| **Cabo de Força AC** | Cabo tripolar com plugue 10A padrão NBR 14136 (0,75 mm² ou 1,0 mm²) | 1 un. (1,5m) | `cabo de forca tripolar 3 pinos 10a` |
 | **Conectores** | Bornes de alavanca tipo WAGO 221 (2 e 3 vias) | 4–6 un. | `conector wago 221 alavanca` |
 
 ---
@@ -119,6 +121,59 @@ Quando o ciclo termina e a resistência desliga, o ar interno começa a resfriar
 
 > [!IMPORTANT]
 > **3. GND UNIFICADO (COMMON GROUND)**: O polo negativo (GND) da fonte de 24V, o GND do conversor step-down e o pino GND do ESP32 devem estar conectados no mesmo barramento para garantir a referência de tensão dos sinais de chaveamento PWM e SPI/I2C.
+
+---
+
+### Dimensionamento e Cálculo de Bitolas de Cabos (Engenharia Elétrica)
+
+Para garantir segurança contra aquecimento, vida útil prolongada e queda de tensão desprezível ($\Delta V < 1\%$), todos os condutores do secador foram calculados segundo os critérios da **NBR 5410** e tabelas internacionais **AWG (*American Wire Gauge*)**.
+
+#### 1. Fórmulas de Dimensionamento Utilizadas:
+* **Corrente Nominal ($I$ em Amperes)**:
+  $$I = \frac{P}{V}$$
+* **Queda de Tensão no Trecho ($\Delta V$ em Volts)**:
+  $$\Delta V = \frac{2 \cdot L \cdot I \cdot \rho}{S}$$
+  * $L$ = Comprimento do trecho em metros.
+  * $I$ = Corrente em Amperes.
+  * $\rho$ = Resistividade do cobre ($0,0175 \ \Omega \cdot \text{mm}^2/\text{m}$).
+  * $S$ = Área da seção transversal do cabo em $\text{mm}^2$.
+* **Densidade de Corrente ($J$ em $\text{A/mm}^2$)**:
+  $$J = \frac{I}{S} \le 5,0 \ \text{A/mm}^2 \quad \text{(Critério conservador para operação 24/7 fria)}$$
+
+---
+
+#### 2. Tabela de Cálculo Detalhada Circuito por Circuito
+
+| Circuito / Trecho | Tensão ($V$) | Corrente Máx. ($I$) | Distância ($L$) | Bitola Mín. Calculada | Bitola Recomendada (Comercial) | Queda de Tensão ($\Delta V$) | Margem de Segurança |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Entrada AC (Tomada $\rightarrow$ Fonte)** | 110V / 220V AC | 2,7A (110V) / 1,4A (220V) | 1,5 m | 0,50 mm² | **0,75 mm² a 1,0 mm²** (Tripolar) | $< 0,3\%$ | $+180\%$ |
+| **Linha Tronco 24V (Fonte $\rightarrow$ Distribuição)** | 24V DC | 7,0A (Pico 8,5A) | 0,5 m | 0,85 mm² | **1,5 mm² (16 AWG)** Flexível | $0,08\text{ V } (0,33\%)$ | $+120\%$ |
+| **Ramal do Aquecedor PTC 150W** | 24V DC | 6,25A | 1,0 m | 1,00 mm² | **1,5 mm² (16 AWG)** Silicone Térmico | $0,15\text{ V } (0,61\%)$ | $+95\%$ |
+| **Ramal das Ventoinhas de Purga (2x 6015)** | 24V DC | 0,40A | 1,5 m | 0,15 mm² | **0,50 mm² (20 AWG)** Bicolor | $0,04\text{ V } (0,17\%)$ | $+230\%$ |
+| **Ventoinha Interna do PTC** | 24V DC | 0,15A | 0,8 m | 0,10 mm² | **0,50 mm² (20 AWG)** | $0,01\text{ V } (0,04\%)$ | $+400\%$ |
+| **Alimentação 5.0V (Step-Down $\rightarrow$ ESP32-S3)** | 5,0V DC | 0,50A (Pico Wi-Fi) | 0,2 m | 0,15 mm² | **0,50 mm² (20 AWG)** | $0,007\text{ V } (0,14\%)$ | $+230\%$ |
+| **Sinais de Controle PWM (Bornes 6 e 7)** | 3,3V Lógica | 0,005A (5 mA) | 0,3 m | 0,05 mm² | **24 a 26 AWG** (Jumpers) | Desprezível | Sinal puro |
+| **Sensores SHT31 (Barramento I2C)** | 3,3V Lógica | $< 0,001\text{A}$ (1 mA) | 0,8 m | 0,05 mm² | **24 a 26 AWG** (Jumpers) | Desprezível | Sinal puro |
+| **Display TFT 2.4" Touch (Barramento SPI)** | 3,3V Lógica | 0,08A (com Backlight) | 0,2 m | 0,08 mm² | **24 a 26 AWG** (Jumpers) | Desprezível | Sinal puro |
+
+---
+
+#### 3. Guia Prático de Compra de Fios (Resumo Consolidado)
+
+Para não precisar comprar vários rolos diferentes, adquira apenas estas **4 categorias comerciais**:
+
+1. **Cabo de Força AC Tripolar (Tomada da Fonte)**:
+   * **Especificação**: Cabo flexível tripolar 3×0,75 mm² ou 3×1,0 mm² com plugue injetado 3 pinos 10A (Padrão NBR 14136).
+   * **Comprimento**: 1,5 a 2 metros.
+2. **Cabo de Potência 24V (Linha Principal e Aquecedor PTC)**:
+   * **Especificação**: Cabo flexível de cobre puro **1,5 mm² (16 AWG)**.
+   * **Cores**: 3 metros Vermelho e 3 metros Preto.
+   * *(Recomendação Pro: para o trecho do aquecedor que fica dentro da estufa a 50°C, dê preferência a cabos com capa de silicone resistente a alta temperatura).*
+3. **Cabo de Média Carga (Ventoinhas e Linha 5V do Step-Down)**:
+   * **Especificação**: Cabo paralelo flexível bicolor **0,50 mm² (20 AWG)**.
+   * **Comprimento**: 3 metros.
+4. **Cabos de Sinal e Dados (ESP32-S3, Display e Sensores)**:
+   * **Especificação**: Kit de **Jumpers para Protoboard Fêmea-Fêmea e Fêmea-Macho de 20 cm (24 a 26 AWG)** (1 cartela com 40 unidades).
 
 ---
 
