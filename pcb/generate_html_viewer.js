@@ -622,7 +622,7 @@ const html = `<!DOCTYPE html>
             <rect x="78" y="5" width="11.5" height="6" rx="0.5"/>
 
             <!-- TEXTOS E NOMES CLAROS DOS COMPONENTES -->
-            <text x="50" y="98.5" fill="#ffffff" stroke="none" font-size="1.4" font-weight="bold" text-anchor="middle">DRYBOX 60L PRO • MOTHERBOARD CARRIER SHIELD v1.1</text>
+            <text x="28.5" y="97.2" fill="#ffffff" stroke="none" font-size="1.15" font-weight="bold" text-anchor="middle">DRYBOX 60L PRO • MOTHERBOARD SHIELD v1.1</text>
             <text x="50" y="1.2" fill="#94a3b8" stroke="none" font-size="1.0" text-anchor="middle">PCBWAY / JLCPCB • 100x100mm 2-LAYER FR4 1.6mm</text>
             
             <!-- ENTRADA 24V E FUSÍVEL -->
@@ -641,33 +641,39 @@ const html = `<!DOCTYPE html>
             <text x="78.0" y="94.5" fill="#f472b6" stroke="none" font-size="0.8" font-weight="bold">OUT+ (5V)</text>
             <text x="78.0" y="81.5" fill="#bae6fd" stroke="none" font-size="0.8" font-weight="bold">OUT- (GND)</text>
             
-            <!-- ESP32-S3 DEVKITC-1 -->
-            <text x="24.7" y="58" fill="#38bdf8" stroke="none" font-size="1.6" font-weight="bold" text-anchor="middle">ESP32-S3 DEVKITC-1</text>
-            <text x="24.7" y="54" fill="#ffffff" stroke="none" font-size="1.1" font-weight="bold" text-anchor="middle">N16R8 (16MB / 8MB)</text>
-            <text x="24.7" y="49" fill="#cbd5e1" stroke="none" font-size="0.8" text-anchor="middle">SOLDAR 2x BARRAS FÊMEA 22 PINOS</text>
-            <text x="24.7" y="45.5" fill="#cbd5e1" stroke="none" font-size="0.75" text-anchor="middle">LADO DIREITO: CONTROLE E DADOS</text>
+            <!-- ESP32-S3 DEVKITC-1 (MIOLO LIMPO E CENTRALIZADO) -->
+            <rect x="16.5" y="51.5" width="16.5" height="17" rx="0.5" stroke="#38bdf8" stroke-width="0.3"/>
+            <text x="24.7" y="62" fill="#38bdf8" stroke="none" font-size="1.4" font-weight="bold" text-anchor="middle">ESP32-S3</text>
+            <text x="24.7" y="58" fill="#ffffff" stroke="none" font-size="1.0" font-weight="bold" text-anchor="middle">WROOM-1 N16R8</text>
+            <text x="24.7" y="54" fill="#94a3b8" stroke="none" font-size="0.85" font-weight="bold" text-anchor="middle">DEVKITC-1</text>
+            <text x="24.7" y="47.5" fill="#cbd5e1" stroke="none" font-size="0.75" text-anchor="middle">BARRAS FÊMEA 2x22</text>
+            <text x="24.7" y="44.0" fill="#cbd5e1" stroke="none" font-size="0.75" text-anchor="middle">PASSO 2.54mm • LARG. 25.4mm</text>
 
-            <!-- PINOS INDIVIDUAIS DO ESP32-S3 -->
+            <!-- PINOS ESQUERDOS ESP32-S3 -->
             <text x="14.5" y="78.2" fill="#c084fc" stroke="none" font-size="0.75" font-weight="bold">3V3</text>
             <text x="14.5" y="75.6" fill="#94a3b8" stroke="none" font-size="0.75">EN</text>
-            <text x="14.5" y="47.2" fill="#38bdf8" stroke="none" font-size="0.75">GND</text>
+            <text x="14.5" y="34.8" fill="#38bdf8" stroke="none" font-size="0.75">GND</text>
 
-            <text x="34.0" y="78.2" fill="#ec4899" stroke="none" font-size="0.75" font-weight="bold">5V</text>
-            <text x="33.0" y="75.6" fill="#38bdf8" stroke="none" font-size="0.75" font-weight="bold">GND</text>
-            <text x="29.0" y="73.1" fill="#eab308" stroke="none" font-size="0.75">4(SDA)</text>
-            <text x="29.0" y="70.5" fill="#f59e0b" stroke="none" font-size="0.75">5(SCL)</text>
-            <text x="29.0" y="68.0" fill="#22c55e" stroke="none" font-size="0.75" font-weight="bold">6(PTC)</text>
-            <text x="27.0" y="65.5" fill="#4ade80" stroke="none" font-size="0.75" font-weight="bold">7(PURGA)</text>
-            <text x="28.5" y="62.9" fill="#38bdf8" stroke="none" font-size="0.75">8(T_CS)</text>
-            <text x="31.0" y="60.4" fill="#38bdf8" stroke="none" font-size="0.75">9(DC)</text>
-            <text x="30.0" y="57.8" fill="#38bdf8" stroke="none" font-size="0.75">10(CS)</text>
-            <text x="27.5" y="55.3" fill="#c084fc" stroke="none" font-size="0.75">11(MOSI)</text>
-            <text x="28.5" y="52.8" fill="#c084fc" stroke="none" font-size="0.75">12(SCK)</text>
-            <text x="27.5" y="50.2" fill="#c084fc" stroke="none" font-size="0.75">13(MISO)</text>
-            <text x="28.5" y="47.7" fill="#38bdf8" stroke="none" font-size="0.75">14(RST)</text>
-            <text x="30.0" y="45.1" fill="#c084fc" stroke="none" font-size="0.75" font-weight="bold">3.3V</text>
+            <!-- PINOS DIREITOS ESP32-S3 (NO CORREDOR EXTERNO X=40mm - SEM SOBREPOSIÇÕES) -->
+            <text x="40.0" y="78.2" fill="#ec4899" stroke="none" font-size="0.75" font-weight="bold">5V (IN)</text>
+            <text x="40.0" y="75.6" fill="#38bdf8" stroke="none" font-size="0.75" font-weight="bold">GND</text>
+            <text x="40.0" y="73.1" fill="#eab308" stroke="none" font-size="0.75">4:SDA</text>
+            <text x="40.0" y="70.5" fill="#f59e0b" stroke="none" font-size="0.75">5:SCL</text>
+            <text x="40.0" y="68.0" fill="#22c55e" stroke="none" font-size="0.75" font-weight="bold">6:PTC</text>
+            <text x="40.0" y="65.5" fill="#4ade80" stroke="none" font-size="0.75" font-weight="bold">7:PURGA</text>
+            <text x="40.0" y="62.9" fill="#38bdf8" stroke="none" font-size="0.75">8:T_CS</text>
+            <text x="40.0" y="60.4" fill="#38bdf8" stroke="none" font-size="0.75">9:DC</text>
+            <text x="40.0" y="57.8" fill="#38bdf8" stroke="none" font-size="0.75">10:CS</text>
+            <text x="40.0" y="55.3" fill="#c084fc" stroke="none" font-size="0.75">11:MOSI</text>
+            <text x="40.0" y="52.8" fill="#c084fc" stroke="none" font-size="0.75">12:SCK</text>
+            <text x="40.0" y="50.2" fill="#c084fc" stroke="none" font-size="0.75">13:MISO</text>
+            <text x="40.0" y="47.7" fill="#38bdf8" stroke="none" font-size="0.75">14:RST</text>
+            <text x="40.0" y="45.1" fill="#c084fc" stroke="none" font-size="0.75" font-weight="bold">3.3V</text>
 
-            <text x="24.7" y="24" fill="#f87171" stroke="none" font-size="0.7" font-weight="bold" text-anchor="middle">⚠️ BORNES 35, 36, 37 PROIBIDOS (PSRAM)</text>
+            <!-- AVISO PSRAM ESP32 -->
+            <rect x="12" y="24" width="25.4" height="6" rx="0.5" stroke="#ef4444" stroke-width="0.3"/>
+            <text x="24.7" y="28" fill="#fca5a5" stroke="none" font-size="0.75" font-weight="bold" text-anchor="middle">PINOS 35, 36, 37</text>
+            <text x="24.7" y="25.5" fill="#fca5a5" stroke="none" font-size="0.7" font-weight="bold" text-anchor="middle">PROIBIDOS (PSRAM)</text>
 
             <!-- MOSFETS 1 E 2 -->
             <text x="59.5" y="72" fill="#f87171" stroke="none" font-size="1.1" font-weight="bold" text-anchor="middle">MOSFET 1: AQUECEDOR PTC</text>
