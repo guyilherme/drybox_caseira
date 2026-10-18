@@ -199,15 +199,17 @@
     }
 
     /* CLASSES PARA FILTROS DINÂMICOS NO SVG */
-    .wire {
-      transition: opacity 0.3s ease, stroke-width 0.2s ease;
+    .wire, [id^="mod-"] {
+      transition: opacity 0.35s ease;
     }
     .wire.dimmed {
-      opacity: 0.12 !important;
+      opacity: 0.06 !important;
     }
     .wire.highlighted {
       opacity: 1 !important;
-      filter: drop-shadow(0 0 6px currentColor);
+    }
+    .wire.highlighted path {
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
     }
 
     /* PAINÉIS DE INFORMAÇÃO */
@@ -429,29 +431,38 @@
 
   <!-- CONTROLES / FILTROS DINÂMICOS -->
   <div class="controls-container">
-    <span class="filter-label">Filtrar Barramento / Fiação:</span>
+    <div style="display:flex; justify-content:space-between; align-items:center; width:100%; flex-wrap:wrap; gap:8px;">
+      <span class="filter-label">Filtrar Barramento / Fiação:</span>
+      <span id="filterStatusBadge" class="pill" style="font-size:0.75rem;">Modo: Sistema Completo</span>
+    </div>
     <div class="filter-buttons">
-      <button class="btn-filter active" onclick="filterWires('all')">
+      <button class="btn-filter active" data-filter="all" onclick="filterWires('all', this)">
         <span class="btn-dot" style="background:#fff;"></span> Ver Sistema Completo
       </button>
-      <button class="btn-filter" onclick="filterWires('power')">
+      <button class="btn-filter" data-filter="ac" onclick="filterWires('ac', this)">
+        <span class="btn-dot" style="background:#b45309;"></span> Rede AC (110V/220V)
+      </button>
+      <button class="btn-filter" data-filter="power" onclick="filterWires('power', this)">
         <span class="btn-dot" style="background:#ef4444;"></span> Alimentação (+24V / +5V / +3.3V)
       </button>
-      <button class="btn-filter" onclick="filterWires('gnd')">
+      <button class="btn-filter" data-filter="gnd" onclick="filterWires('gnd', this)">
         <span class="btn-dot" style="background:#0284c7;"></span> Terra Comum (GND Unificado)
       </button>
-      <button class="btn-filter" onclick="filterWires('pwm')">
+      <button class="btn-filter" data-filter="pwm" onclick="filterWires('pwm', this)">
         <span class="btn-dot" style="background:#22c55e;"></span> Controle PWM (PTC & Purga)
       </button>
-      <button class="btn-filter" onclick="filterWires('spi')">
+      <button class="btn-filter" data-filter="spi" onclick="filterWires('spi', this)">
         <span class="btn-dot" style="background:#38bdf8;"></span> Barramento SPI (Display & Touch)
       </button>
-      <button class="btn-filter" onclick="filterWires('i2c')">
+      <button class="btn-filter" data-filter="i2c" onclick="filterWires('i2c', this)">
         <span class="btn-dot" style="background:#eab308;"></span> Barramento I2C (Sensores SHT31)
       </button>
-      <button class="btn-filter" onclick="filterWires('switched')">
+      <button class="btn-filter" data-filter="switched" onclick="filterWires('switched', this)">
         <span class="btn-dot" style="background:#f97316;"></span> Chaveamento Negativo (MOSFET OUT)
       </button>
+    </div>
+    <div id="filterStatusText" style="width:100%; padding:10px 14px; background:#0b1120; border:1px solid #1e293b; border-radius:8px; font-size:0.88rem; color:#cbd5e1; line-height:1.4;">
+      <strong>Visão Geral:</strong> Exibindo todos os circuitos, fios de potência, lógica e barramentos do sistema.
     </div>
   </div>
 
@@ -1430,31 +1441,99 @@
 
   <!-- SCRIPT DE INTERATIVIDADE -->
   <script>
-    function filterWires(category) {
-      // Atualiza botões
-      const buttons = document.querySelectorAll('.btn-filter');
-      buttons.forEach(btn => btn.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+    function filterWires(category, btnElement) {
+      try {
+        // 1. Atualiza visual dos botões
+        const buttons = document.querySelectorAll('.btn-filter');
+        buttons.forEach(btn => btn.classList.remove('active'));
 
-      const allWires = document.querySelectorAll('.wire');
-
-      if (category === 'all') {
-        allWires.forEach(w => {
-          w.classList.remove('dimmed', 'highlighted');
-        });
-        return;
-      }
-
-      // Diminui todos e destaca a categoria escolhida
-      allWires.forEach(w => {
-        if (w.classList.contains('group-' + category)) {
-          w.classList.remove('dimmed');
-          w.classList.add('highlighted');
+        if (btnElement && btnElement.classList) {
+          btnElement.classList.add('active');
         } else {
-          w.classList.remove('highlighted');
-          w.classList.add('dimmed');
+          const matchedBtn = document.querySelector(`.btn-filter[data-filter="${category}"]`);
+          if (matchedBtn) matchedBtn.classList.add('active');
         }
-      });
+
+        // 2. Textos descritivos e badges
+        const descriptions = {
+          'all': '<strong>Visão Geral:</strong> Exibindo todos os circuitos, fios de potência 24V, regulador 5V, lógica 3.3V e barramentos do sistema.',
+          'ac': '<strong>Rede Elétrica AC (110V/220V):</strong> Entrada de força com cabo tripolar NBR 14136 (Fase L, Neutro N e Terra ⏚) conectada aos bornes da fonte industrial 24V 250W.',
+          'power': '<strong>Linhas de Alimentação (+24V, +5V, +3.3V):</strong> Tronco 24V (Vermelho 1,5mm²), saída 5.00V do Step-Down LM2596 e barramento 3.3V do ESP32-S3 (lógica e backlight LED da tela).',
+          'gnd': '<strong>Terra Comum (GND Unificado):</strong> Barramento de referência unificado (Azul) interligando Fonte 24V, Step-Down, Borne G do ESP32-S3 e V- dos módulos MOSFET.',
+          'pwm': '<strong>Sinais de Controle PWM (3.3V):</strong> Borne 6 (GPIO 6 - Modulação PID do Aquecedor PTC) e Borne 7 (GPIO 7 - Purga por rajadas).',
+          'spi': '<strong>Barramento SPI de Alta Velocidade:</strong> Conexão entre ESP32-S3 (Bornes 8 a 14) e Display TFT 2.4" Touch (MOSI 11, SCK 12, MISO 13, CS 10, DC 9, RST 14, T_CS 8).',
+          'i2c': '<strong>Barramento I2C dos Sensores:</strong> Linhas SDA (Borne 4) e SCL (Borne 5) interligando em paralelo o SHT31 Interno (0x44) e o SHT31 Externo (0x45).',
+          'switched': '<strong>Chaveamento Negativo Low-Side (MOSFET OUT):</strong> Retorno negativo chaveado (Laranja) da Resistência do Aquecedor PTC 150W e das 2 Ventoinhas de Purga 6015.'
+        };
+
+        const badgeLabels = {
+          'all': 'Modo: Sistema Completo',
+          'ac': 'Modo: Rede Elétrica AC (110V/220V)',
+          'power': 'Modo: Alimentação (+24V / +5V / +3.3V)',
+          'gnd': 'Modo: Terra Comum (GND Unificado)',
+          'pwm': 'Modo: Sinais PWM (PTC & Purga)',
+          'spi': 'Modo: Barramento SPI (Display & Touch)',
+          'i2c': 'Modo: Barramento I2C (Sensores SHT31)',
+          'switched': 'Modo: Chaveamento Negativo (MOSFET OUT)'
+        };
+
+        const statusBox = document.getElementById('filterStatusText');
+        const badgeBox = document.getElementById('filterStatusBadge');
+        if (statusBox && descriptions[category]) statusBox.innerHTML = descriptions[category];
+        if (badgeBox && badgeLabels[category]) badgeBox.textContent = badgeLabels[category];
+
+        // 3. Manipulação de Fios no SVG
+        const allWires = document.querySelectorAll('.wire');
+        const allModules = document.querySelectorAll('[id^="mod-"]');
+
+        if (category === 'all') {
+          allWires.forEach(w => {
+            w.style.opacity = '1';
+            w.classList.remove('dimmed');
+            w.classList.add('highlighted');
+          });
+          allModules.forEach(m => {
+            m.style.opacity = '1';
+          });
+          return;
+        }
+
+        // Aplica filtro por classe group-
+        allWires.forEach(w => {
+          if (w.classList.contains('group-' + category)) {
+            w.style.opacity = '1';
+            w.classList.remove('dimmed');
+            w.classList.add('highlighted');
+          } else {
+            w.style.opacity = '0.06';
+            w.classList.remove('highlighted');
+            w.classList.add('dimmed');
+          }
+        });
+
+        // 4. Módulos relacionados à categoria
+        const relatedModules = {
+          'ac': ['mod-ac', 'mod-psu'],
+          'power': ['mod-psu', 'mod-fuse', 'mod-wago', 'mod-stepdown', 'mod-esp32', 'mod-mosfet1', 'mod-mosfet2', 'mod-ptc', 'mod-fans', 'mod-display', 'mod-sensors'],
+          'gnd': ['mod-psu', 'mod-wago', 'mod-stepdown', 'mod-esp32', 'mod-mosfet1', 'mod-mosfet2', 'mod-ptc', 'mod-fans'],
+          'pwm': ['mod-esp32', 'mod-mosfet1', 'mod-mosfet2'],
+          'spi': ['mod-esp32', 'mod-display'],
+          'i2c': ['mod-esp32', 'mod-sensors'],
+          'switched': ['mod-mosfet1', 'mod-mosfet2', 'mod-ptc', 'mod-fans']
+        };
+
+        const activeMods = relatedModules[category] || [];
+        allModules.forEach(m => {
+          if (activeMods.includes(m.id)) {
+            m.style.opacity = '1';
+          } else {
+            m.style.opacity = '0.35';
+          }
+        });
+
+      } catch (err) {
+        console.error('Erro no filtro de fios:', err);
+      }
     }
 
     // CHECKLIST LOCAL STORAGE
@@ -1500,6 +1579,14 @@
           console.error(e);
         }
       }
+
+      // Registra listeners de clique em todos os botões de filtro
+      document.querySelectorAll('.btn-filter').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const category = this.getAttribute('data-filter');
+          if (category) filterWires(category, this);
+        });
+      });
     });
   </script>
 </body>
