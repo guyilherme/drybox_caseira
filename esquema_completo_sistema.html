@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Esquema Elétrico Completo e Interativo • Drybox 60L Pro</title>
+  <style>
+    :root {
+      --bg-main: #090d16;
+      --bg-card: #0f172a;
+      --bg-card-inner: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --color-primary: #38bdf8;
+      --color-danger: #ef4444;
+      --color-warning: #f59e0b;
+      --color-success: #22c55e;
+      --color-purple: #a855f7;
+      --color-blue: #0284c7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      max-width: 1600px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .badge-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .pill-red {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .pill-green {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 1100px;
+    }
+
+    /* BARRA DE FILTROS INTERATIVOS */
+    .controls-container {
+      width: 100%;
+      max-width: 1600px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .filter-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-filter {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #cbd5e1;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-filter:hover {
+      background: #334155;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .btn-filter.active {
+      background: #0284c7;
+      color: #fff;
+      border-color: #38bdf8;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+    }
+
+    .btn-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* CONTAINER DO SVG */
+    .diagram-card {
+      width: 100%;
+      max-width: 1600px;
+      background: #0b1120;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .diagram-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: #111827;
+      border-bottom: 1px solid #1f2937;
+      font-size: 0.88rem;
+      color: #9ca3af;
+    }
+
+    .svg-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      background: #080d1a;
+      display: block;
+    }
+
+    svg {
+      width: 100%;
+      min-width: 1400px;
+      height: auto;
+      display: block;
+      transition: all 0.3s ease;
+    }
+
+    /* CLASSES PARA FILTROS DINÂMICOS NO SVG */
+    .wire {
+      transition: opacity 0.3s ease, stroke-width 0.2s ease;
+    }
+    .wire.dimmed {
+      opacity: 0.12 !important;
+    }
+    .wire.highlighted {
+      opacity: 1 !important;
+      filter: drop-shadow(0 0 6px currentColor);
+    }
+
+    /* PAINÉIS DE INFORMAÇÃO */
+    .sections-container {
+      width: 100%;
+      max-width: 1600px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--color-primary);
+    }
+
+    .card-danger::before { background: var(--color-danger); }
+    .card-warning::before { background: var(--color-warning); }
+    .card-success::before { background: var(--color-success); }
+    .card-purple::before { background: var(--color-purple); }
+
+    .card h3 {
+      font-size: 1.25rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card p, .card li {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+    }
+
+    .card ul {
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid #334155;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+
+    th {
+      background: #1e293b;
+      color: #38bdf8;
+      padding: 12px 14px;
+      font-weight: 700;
+      border-bottom: 1px solid #475569;
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #334155;
+      color: #e2e8f0;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    .badge-pin {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-family: monospace;
+      font-size: 0.85rem;
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #38bdf8;
+    }
+
+    .tag-danger {
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .tag-warn {
+      color: #fbbf24;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    /* CHECKLIST DE BANCADA */
+    .checklist-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 12px;
+      background: #1e293b;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 15px 0 20px 0;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8, #22c55e);
+      transition: width 0.3s ease;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #1e293b;
+      cursor: pointer;
+    }
+
+    .checklist-item:last-child {
+      border-bottom: none;
+    }
+
+    .checklist-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #22c55e;
+      margin-top: 3px;
+      cursor: pointer;
+    }
+
+    .checklist-item.done span {
+      text-decoration: line-through;
+      color: #64748b;
+    }
+
+    footer {
+      width: 100%;
+      max-width: 1600px;
+      text-align: center;
+      padding: 20px 0;
+      color: #64748b;
+      font-size: 0.85rem;
+      border-top: 1px solid #1e293b;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-cards {
+        grid-template-columns: 1fr;
+      }
+      h1 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CABEÇALHO -->
+  <header>
+    <div class="badge-bar">
+      <span class="pill">⚡ Sistema Completo de Ponta a Ponta</span>
+      <span class="pill pill-green">✓ Testado & Compatível ESP32-S3</span>
+      <span class="pill pill-red">🛡️ Tripla Proteção de Segurança</span>
+    </div>
+    <h1>Esquema Elétrico Geral & Guia de Ligação Interativo</h1>
+    <p>
+      Estufa Secadora Inteligente de Filamentos 60L Pro (Drybox ESP32-S3 N16R8).
+      Consulte abaixo o diagrama unificado de fiação, identificação dos bornes de parafuso, calibração do regulador step-down, dimensionamento das bitolas de cabos e checklist prático de montagem em bancada.
+    </p>
+  </header>
+
+  <!-- CONTROLES / FILTROS DINÂMICOS -->
+  <div class="controls-container">
+    <span class="filter-label">Filtrar Barramento / Fiação:</span>
+    <div class="filter-buttons">
+      <button class="btn-filter active" onclick="filterWires('all')">
+        <span class="btn-dot" style="background:#fff;"></span> Ver Sistema Completo
+      </button>
+      <button class="btn-filter" onclick="filterWires('power')">
+        <span class="btn-dot" style="background:#ef4444;"></span> Alimentação (+24V / +5V / +3.3V)
+      </button>
+      <button class="btn-filter" onclick="filterWires('gnd')">
+        <span class="btn-dot" style="background:#0284c7;"></span> Terra Comum (GND Unificado)
+      </button>
+      <button class="btn-filter" onclick="filterWires('pwm')">
+        <span class="btn-dot" style="background:#22c55e;"></span> Controle PWM (PTC & Purga)
+      </button>
+      <button class="btn-filter" onclick="filterWires('spi')">
+        <span class="btn-dot" style="background:#38bdf8;"></span> Barramento SPI (Display & Touch)
+      </button>
+      <button class="btn-filter" onclick="filterWires('i2c')">
+        <span class="btn-dot" style="background:#eab308;"></span> Barramento I2C (Sensores SHT31)
+      </button>
+      <button class="btn-filter" onclick="filterWires('switched')">
+        <span class="btn-dot" style="background:#f97316;"></span> Chaveamento Negativo (MOSFET OUT)
+      </button>
+    </div>
+  </div>
+
+  <!-- DIAGRAMA SVG UNIFICADO -->
+  <div class="diagram-card">
+    <div class="diagram-toolbar">
+      <span>📐 <strong>Diagrama Esquemático Unificado</strong> (Scroll horizontal disponível para telas menores)</span>
+      <span>Passe o cursor sobre os módulos para destacar • 100% em Português</span>
+    </div>
+
+    <div class="svg-wrapper">
+      <svg id="schematicSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 1150" width="1700" height="1150">
+        <defs>
+          <filter id="shadowBox" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="3" dy="6" stdDeviation="7" flood-color="#000000" flood-opacity="0.6"/>
+          </filter>
+          <linearGradient id="gradPsu" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#334155"/>
+            <stop offset="100%" stop-color="#1e293b"/>
+          </linearGradient>
+          <linearGradient id="gradEsp" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1e293b"/>
+            <stop offset="100%" stop-color="#0f172a"/>
+          </linearGradient>
+          <linearGradient id="gradMosfet" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#18181b"/>
+            <stop offset="100%" stop-color="#09090b"/>
+          </linearGradient>
+          <linearGradient id="gradDisplay" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#991b1b"/>
+            <stop offset="100%" stop-color="#7f1d1d"/>
+          </linearGradient>
+          <linearGradient id="gradPtcheater" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#262626"/>
+            <stop offset="100%" stop-color="#171717"/>
+          </linearGradient>
+        </defs>
+
+        <!-- FUNDO E CABEÇALHO DO SVG -->
+        <rect x="0" y="0" width="1700" height="70" fill="#0f172a" />
+        <line x1="0" y1="70" x2="1700" y2="70" stroke="#334155" stroke-width="2"/>
+        <text x="850" y="38" fill="#38bdf8" font-size="24" font-weight="bold" text-anchor="middle">ESQUEMA DE LIGAÇÃO COMPLETO DE PONTA A PONTA • DRYBOX 60L PRO</text>
+        <text x="850" y="58" fill="#94a3b8" font-size="13" text-anchor="middle">ESP32-S3 N16R8 • Fonte Industrial 24V 250W • Step-Down LM2596 (5V) • Módulos HW-532 • PTC 150W • 2x SHT31 • TFT 2.4" Touch</text>
+
+        <!-- ===================================================================== -->
+        <!-- 1. ENTRADA DE REDE AC (110V / 220V)                                  -->
+        <!-- ===================================================================== -->
+        <g id="mod-ac" transform="translate(40, 100)" filter="url(#shadowBox)">
+          <rect width="210" height="150" rx="8" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+          <rect x="10" y="10" width="190" height="32" rx="4" fill="#0f172a"/>
+          <text x="105" y="32" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">REDE ELÉTRICA AC</text>
+          <text x="105" y="60" fill="#94a3b8" font-size="11" text-anchor="middle">Tomada Tripolar NBR 14136</text>
+          <text x="105" y="76" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">110V ou 220V (10A)</text>
+          
+          <g transform="translate(20, 95)">
+            <rect width="45" height="35" rx="4" fill="#78350f" stroke="#b45309"/>
+            <text x="22" y="18" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">FASE</text>
+            <text x="22" y="30" fill="#fef3c7" font-size="9" text-anchor="middle">(L)</text>
+          </g>
+          <g transform="translate(80, 95)">
+            <rect width="45" height="35" rx="4" fill="#1e3a8a" stroke="#3b82f6"/>
+            <text x="22" y="18" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">NEUTRO</text>
+            <text x="22" y="30" fill="#dbeafe" font-size="9" text-anchor="middle">(N)</text>
+          </g>
+          <g transform="translate(140, 95)">
+            <rect width="45" height="35" rx="4" fill="#14532d" stroke="#22c55e"/>
+            <text x="22" y="18" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">TERRA</text>
+            <text x="22" y="30" fill="#dcfce7" font-size="9" text-anchor="middle">(⏚)</text>
+          </g>
+        </g>
+
+        <!-- ===================================================================== -->
+        <!-- 2. FONTE INDUSTRIAL 24V 250W                                         -->
+        <!-- ===================================================================== -->
+        <g id="mod-psu" transform="translate(300, 100)" filter="url(#shadowBox)">
+          <rect width="300" height="200" rx="8" fill="url(#gradPsu)" stroke="#64748b" stroke-width="2"/>
+          <rect x="15" y="12" width="270" height="36" rx="4" fill="#0f172a"/>
+          <text x="150" y="36" fill="#f8fafc" font-size="15" font-weight="bold" text-anchor="middle">FONTE CHAVEADA 24V</text>
+          <text x="150" y="65" fill="#94a3b8" font-size="12" text-anchor="middle">Potência: 250W • Saída: 24V DC / 10.4A</text>
+          <text x="150" y="82" fill="#cbd5e1" font-size="10" text-anchor="middle">(Ajuste o seletor 110V/220V na lateral)</text>
+          
+          <!-- Terminal de Bornes da Fonte -->
+          <rect x="15" y="115" width="270" height="70" rx="6" fill="#090d16" stroke="#475569"/>
+          
+          <circle cx="40" cy="145" r="12" fill="#78350f" stroke="#b45309" stroke-width="2"/>
+          <text x="40" y="149" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">L</text>
+          <text x="40" y="172" fill="#94a3b8" font-size="9" text-anchor="middle">Fase</text>
+
+          <circle cx="85" cy="145" r="12" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2"/>
+          <text x="85" y="149" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">N</text>
+          <text x="85" y="172" fill="#94a3b8" font-size="9" text-anchor="middle">Neutro</text>
+
+          <circle cx="130" cy="145" r="12" fill="#14532d" stroke="#22c55e" stroke-width="2"/>
+          <text x="130" y="149" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">⏚</text>
+          <text x="130" y="172" fill="#94a3b8" font-size="9" text-anchor="middle">Terra</text>
+
+          <circle cx="195" cy="145" r="14" fill="#0284c7" stroke="#38bdf8" stroke-width="2"/>
+          <text x="195" y="149" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">-V</text>
+          <text x="195" y="172" fill="#38bdf8" font-size="9" font-weight="bold" text-anchor="middle">GND</text>
+
+          <circle cx="250" cy="145" r="14" fill="#dc2626" stroke="#f87171" stroke-width="2"/>
+          <text x="250" y="149" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">+V</text>
+          <text x="250" y="172" fill="#f87171" font-size="9" font-weight="bold" text-anchor="middle">+24V</text>
+        </g>
+
+        <!-- ===================================================================== -->
+        <!-- 3. PROTEÇÃO: PORTA-FUSÍVEL 10A E BLOCO DE DISTRIBUIÇÃO WAGO           -->
+        <!-- ===================================================================== -->
+        <g id="mod-fuse" transform="translate(640, 200)" filter="url(#shadowBox)">
+          <rect width="110" height="60" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+          <rect x="25" y="12" width="60" height="24" rx="4" fill="#dc2626"/>
+          <text x="55" y="28" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">10A</text>
+          <text x="55" y="50" fill="#fca5a5" font-size="9" text-anchor="middle">Fusível Lâmina</text>
+        </g>
+
+        <!-- Bloco Distribuidor WAGO +24V e GND -->
+        <g id="mod-wago" transform="translate(800, 150)" filter="url(#shadowBox)">
+          <!-- WAGO +24V -->
+          <rect width="120" height="65" rx="6" fill="#450a0a" stroke="#dc2626" stroke-width="2"/>
+          <text x="60" y="25" fill="#fca5a5" font-size="11" font-weight="bold" text-anchor="middle">WAGO +24V</text>
+          <circle cx="25" cy="45" r="8" fill="#dc2626"/>
+          <circle cx="50" cy="45" r="8" fill="#dc2626"/>
+          <circle cx="75" cy="45" r="8" fill="#dc2626"/>
+          <circle cx="100" cy="45" r="8" fill="#dc2626"/>
+
+          <!-- WAGO GND -->
+          <g transform="translate(0, 80)">
+            <rect width="120" height="65" rx="6" fill="#082f49" stroke="#0284c7" stroke-width="2"/>
+            <text x="60" y="25" fill="#bae6fd" font-size="11" font-weight="bold" text-anchor="middle">WAGO GND</text>
+            <circle cx="25" cy="45" r="8" fill="#0284c7"/>
+            <circle cx="50" cy="45" r="8" fill="#0284c7"/>
+            <circle cx="75" cy="45" r="8" fill="#0284c7"/>
+            <circle cx="100" cy="45" r="8" fill="#0284c7"/>
+          </g>
+        </g>
+
+        <!-- ===================================================================== -->
+        <!-- 4. REGULADOR STEP-DOWN LM2596 (COM DISPLAY DIGITAL)                  -->
+        <!-- ===================================================================== -->
+        <g id="mod-stepdown" transform="translate(640, 360)" filter="url(#shadowBox)">
+          <rect width="280" height="150" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
+          <text x="140" y="25" fill="#60a5fa" font-size="13" font-weight="bold" text-anchor="middle">REGULADOR STEP-DOWN LM2596</text>
+          <text x="140" y="42" fill="#94a3b8" font-size="10" text-anchor="middle">Conversor DC-DC com Voltímetro Integrado</text>
+
+          <!-- Display 7 segmentos mostrando 5.00V -->
+          <rect x="90" y="55" width="100" height="42" rx="4" fill="#000" stroke="#dc2626"/>
+          <text x="140" y="85" fill="#ef4444" font-size="20" font-family="monospace" font-weight="bold" text-anchor="middle">5.00v</text>
+
+          <!-- Botão S1 e Trimpot W103 -->
+          <circle cx="60" cy="76" r="10" fill="#334155" stroke="#94a3b8"/>
+          <text x="60" y="105" fill="#cbd5e1" font-size="9" text-anchor="middle">Botão S1</text>
+
+          <rect x="215" y="65" width="22" height="22" rx="2" fill="#1d4ed8" stroke="#93c5fd"/>
+          <circle cx="226" cy="76" r="4" fill="#facc15"/>
+          <text x="226" y="105" fill="#cbd5e1" font-size="9" text-anchor="middle">Trimpot W103</text>
+
+          <!-- Bornes de Entrada (IN) -->
+          <rect x="15" y="112" width="60" height="26" rx="3" fill="#0f172a" stroke="#475569"/>
+          <circle cx="28" cy="125" r="6" fill="#dc2626"/>
+          <circle cx="58" cy="125" r="6" fill="#0284c7"/>
+          <text x="45" y="148" fill="#94a3b8" font-size="9" text-anchor="middle">IN (24V)</text>
+
+          <!-- Bornes de Saída (OUT 5V) -->
+          <rect x="205" y="112" width="60" height="26" rx="3" fill="#0f172a" stroke="#475569"/>
+          <circle cx="218" cy="125" r="6" fill="#ec4899"/>
+          <circle cx="248" cy="125" r="6" fill="#0284c7"/>
+          <text x="235" y="148" fill="#f472b6" font-size="9" font-weight="bold" text-anchor="middle">OUT (5.00V)</text>
+        </g>
+
+        <!-- ===================================================================== -->
+        <!-- 5. ESP32-S3 WROOM-1 N16R8 COM PLACA DE BORNES DE PARAFUSO (44 PINOS)  -->
+        <!-- ===================================================================== -->
+        <g id="mod-esp32" transform="translate(60, 480)" filter="url(#shadowBox)">
+          <rect width="480" height="580" rx="12" fill="url(#gradEsp)" stroke="#38bdf8" stroke-width="2.5"/>
+          
+          <!-- Cabeçalho ESP32-S3 -->
+          <rect x="20" y="15" width="440" height="48" rx="6" fill="#090d16" stroke="#334155"/>
+          <text x="240" y="38" fill="#38bdf8" font-size="17" font-weight="bold" text-anchor="middle">ESP32-S3 DEVKITC-1 N16R8 (PLACA COM BORNES)</text>
+          <text x="240" y="54" fill="#94a3b8" font-size="11" text-anchor="middle">16MB Flash • 8MB PSRAM Octal • Barramento SPI e I2C Nativo</text>
+
+          <!-- Chip Central ESP32-S3 -->
+          <rect x="140" y="85" width="130" height="150" rx="6" fill="#334155" stroke="#64748b" stroke-width="2"/>
+          <rect x="155" y="100" width="100" height="100" rx="4" fill="#1e293b"/>
+          <text x="205" y="150" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">ESP32-S3</text>
+          <text x="205" y="168" fill="#38bdf8" font-size="10" text-anchor="middle">WROOM-1</text>
+          <text x="205" y="182" fill="#94a3b8" font-size="9" text-anchor="middle">N16R8</text>
+
+          <!-- Tarja de Advertência no Bloco Esquerdo (PSRAM) -->
+          <g transform="translate(25, 85)">
+            <rect width="70" height="460" rx="6" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5"/>
+            <text x="35" y="30" fill="#a5b4fc" font-size="11" font-weight="bold" text-anchor="middle">BORNE</text>
+            <text x="35" y="45" fill="#a5b4fc" font-size="11" font-weight="bold" text-anchor="middle">ESQUERDO</text>
+            
+            <rect x="8" y="130" width="54" height="90" rx="4" fill="#7f1d1d" stroke="#ef4444"/>
+            <text x="35" y="150" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">35</text>
+            <text x="35" y="172" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">36</text>
+            <text x="35" y="194" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">37</text>
+            <text x="35" y="210" fill="#fca5a5" font-size="7" font-weight="bold" text-anchor="middle">PROIBIDO</text>
+
+            <text x="35" y="240" fill="#fca5a5" font-size="8" text-anchor="middle">PSRAM</text>
+            <text x="35" y="252" fill="#fca5a5" font-size="8" text-anchor="middle">Interna</text>
+            <text x="35" y="264" fill="#fca5a5" font-size="8" text-anchor="middle">N16R8</text>
+          </g>
+
+          <!-- RÉGUA DE BORNES DIREITA (TODAS AS CONEXÕES REAIS DO SISTEMA) -->
+          <g transform="translate(370, 85)">
+            <rect width="85" height="465" rx="6" fill="#14532d" stroke="#22c55e" stroke-width="2"/>
+            <text x="42" y="20" fill="#bbf7d0" font-size="10" font-weight="bold" text-anchor="middle">LADO DIREITO</text>
+
+            <!-- Borne 5V -->
+            <circle cx="25" cy="45" r="10" fill="#0f172a" stroke="#ec4899" stroke-width="2"/>
+            <text x="25" y="49" fill="#ec4899" font-size="10" font-weight="bold" text-anchor="middle">5V</text>
+            <text x="50" y="49" fill="#fff" font-size="10" font-weight="bold">5V IN</text>
+
+            <!-- Borne GND -->
+            <circle cx="25" cy="75" r="10" fill="#0f172a" stroke="#0284c7" stroke-width="2"/>
+            <text x="25" y="79" fill="#0284c7" font-size="11" font-weight="bold" text-anchor="middle">G</text>
+            <text x="50" y="79" fill="#fff" font-size="10" font-weight="bold">GND</text>
+
+            <!-- Borne 4 (SDA) -->
+            <circle cx="25" cy="110" r="10" fill="#0f172a" stroke="#eab308" stroke-width="2"/>
+            <text x="25" y="114" fill="#eab308" font-size="11" font-weight="bold" text-anchor="middle">4</text>
+            <text x="50" y="114" fill="#eab308" font-size="9" font-weight="bold">I2C SDA</text>
+
+            <!-- Borne 5 (SCL) -->
+            <circle cx="25" cy="140" r="10" fill="#0f172a" stroke="#eab308" stroke-width="2"/>
+            <text x="25" y="144" fill="#eab308" font-size="11" font-weight="bold" text-anchor="middle">5</text>
+            <text x="50" y="144" fill="#eab308" font-size="9" font-weight="bold">I2C SCL</text>
+
+            <!-- Borne 6 (PWM PTC) -->
+            <circle cx="25" cy="175" r="10" fill="#0f172a" stroke="#22c55e" stroke-width="2"/>
+            <text x="25" y="179" fill="#4ade80" font-size="11" font-weight="bold" text-anchor="middle">6</text>
+            <text x="50" y="179" fill="#4ade80" font-size="9" font-weight="bold">PWM PTC</text>
+
+            <!-- Borne 7 (PURGA) -->
+            <circle cx="25" cy="205" r="10" fill="#0f172a" stroke="#22c55e" stroke-width="2"/>
+            <text x="25" y="209" fill="#4ade80" font-size="11" font-weight="bold" text-anchor="middle">7</text>
+            <text x="50" y="209" fill="#4ade80" font-size="9" font-weight="bold">PURGA</text>
+
+            <!-- Borne 8 (TOUCH CS) -->
+            <circle cx="25" cy="240" r="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="25" y="244" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">8</text>
+            <text x="50" y="244" fill="#38bdf8" font-size="9">T_CS</text>
+
+            <!-- Borne 9 (TFT DC) -->
+            <circle cx="25" cy="270" r="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="25" y="274" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">9</text>
+            <text x="50" y="274" fill="#38bdf8" font-size="9">TFT DC</text>
+
+            <!-- Borne 10 (TFT CS) -->
+            <circle cx="25" cy="300" r="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="25" y="304" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">10</text>
+            <text x="50" y="304" fill="#38bdf8" font-size="9">TFT CS</text>
+
+            <!-- Borne 11 (MOSI: SDI + T_DIN) -->
+            <circle cx="25" cy="335" r="10" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+            <text x="25" y="339" fill="#c084fc" font-size="10" font-weight="bold" text-anchor="middle">11</text>
+            <text x="50" y="339" fill="#c084fc" font-size="9" font-weight="bold">MOSI</text>
+
+            <!-- Borne 12 (SCK: SCK + T_CLK) -->
+            <circle cx="25" cy="365" r="10" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+            <text x="25" y="369" fill="#c084fc" font-size="10" font-weight="bold" text-anchor="middle">12</text>
+            <text x="50" y="369" fill="#c084fc" font-size="9" font-weight="bold">SCK</text>
+
+            <!-- Borne 13 (MISO: SDO + T_DO) -->
+            <circle cx="25" cy="395" r="10" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+            <text x="25" y="399" fill="#c084fc" font-size="10" font-weight="bold" text-anchor="middle">13</text>
+            <text x="50" y="399" fill="#c084fc" font-size="9" font-weight="bold">MISO</text>
+
+            <!-- Borne 14 (TFT RESET) -->
+            <circle cx="25" cy="425" r="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="25" y="429" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">14</text>
+            <text x="50" y="429" fill="#38bdf8" font-size="9">RESET</text>
+
+            <!-- Borne 3.3V -->
+            <circle cx="25" cy="452" r="9" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+            <text x="25" y="456" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="middle">3.3</text>
+            <text x="50" y="456" fill="#c084fc" font-size="9" font-weight="bold">3.3V OUT</text>
+          </g>
+        </g>
+
+        <!-- ===================================================================== -->
+        <!-- 6. MÓDULOS MOSFET HW-532 (LR7843)                                    -->
+        <!-- ===================================================================== -->
+        <!-- MOSFET 1: Aquecedor PTC -->
+        <g id="mod-mosfet1" transform="translate(1000, 110)" filter="url(#shadowBox)">
+          <rect width="280" height="170" rx="8" fill="url(#gradMosfet)" stroke="#ef4444" stroke-width="2"/>
+          <text x="140" y="24" fill="#f87171" font-size="12" font-weight="bold" text-anchor="middle">MOSFET 1 • AQUECEDOR PTC</text>
+          <text x="140" y="38" fill="#71717a" font-size="9" text-anchor="middle">HW-532 (LR7843 + Optoacoplador)</text>
+
+          <!-- Borne Verde Controle -->
+          <g transform="translate(15, 55)">
+            <rect width="45" height="75" rx="4" fill="#15803d" stroke="#22c55e"/>
+            <circle cx="22" cy="22" r="7" fill="#0f172a" stroke="#fff"/>
+            <text x="22" y="25" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">PWM</text>
+            <circle cx="22" cy="52" r="7" fill="#0f172a" stroke="#fff"/>
+            <text x="22" y="55" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">GND</text>
+            <text x="22" y="90" fill="#4ade80" font-size="8" text-anchor="middle">3.3V</text>
+          </g>
+
+          <!-- Borne Azul Potência -->
+          <g transform="translate(210, 45)">
+            <rect width="55" height="105" rx="4" fill="#1d4ed8" stroke="#3b82f6"/>
+            <circle cx="27" cy="20" r="8" fill="#0f172a" stroke="#f87171"/>
+            <text x="27" y="23" fill="#f87171" font-size="8" font-weight="bold" text-anchor="middle">V+</text>
+            <circle cx="27" cy="52" r="8" fill="#0f172a" stroke="#38bdf8"/>
+            <text x="27" y="55" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="middle">V-</text>
+            <circle cx="27" cy="84" r="8" fill="#0f172a" stroke="#fbbf24"/>
+            <text x="27" y="87" fill="#fbbf24" font-size="8" font-weight="bold" text-anchor="middle">OUT</text>
+            <text x="27" y="120" fill="#93c5fd" font-size="8" text-anchor="middle">24V</text>
+          </g>
+        </g>
+
+        <!-- MOSFET 2: Ventoinhas de Purga -->
+        <g id="mod-mosfet2" transform="translate(1000, 310)" filter="url(#shadowBox)">
+          <rect width="280" height="170" rx="8" fill="url(#gradMosfet)" stroke="#38bdf8" stroke-width="2"/>
+          <text x="140" y="24" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle">MOSFET 2 • VENTOINHAS DE PURGA</text>
+          <text x="140" y="38" fill="#71717a" font-size="9" text-anchor="middle">HW-532 (LR7843 + Optoacoplador)</text>
+
+          <!-- Borne Verde Controle -->
+          <g transform="translate(15, 55)">
+            <rect width="45" height="75" rx="4" fill="#15803d" stroke="#22c55e"/>
+            <circle cx="22" cy="22" r="7" fill="#0f172a" stroke="#fff"/>
+            <text x="22" y="25" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">PWM</text>
+            <circle cx="22" cy="52" r="7" fill="#0f172a" stroke="#fff"/>
+            <text x="22" y="55" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">GND</text>
+            <text x="22" y="90" fill="#4ade80" font-size="8" text-anchor="middle">3.3V</text>
+          </g>
+
+          <!-- Borne Azul Potência -->
+          <g transform="translate(210, 45)">
+            <rect width="55" height="105" rx="4" fill="#1d4ed8" stroke="#3b82f6"/>
+            <circle cx="27" cy="20" r="8" fill="#0f172a" stroke="#f87171"/>
+            <text x="27" y="23" fill="#f87171" font-size="8" font-weight="bold" text-anchor="middle">V+</text>
+            <circle cx="27" cy="52" r="8" fill="#0f172a" stroke="#38bdf8"/>
+            <text x="27" y="55" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="middle">V-</text>
+            <circle cx="27" cy="84" r="8" fill="#0f172a" stroke="#fbbf24"/>
+            <text x="27" y="87" fill="#fbbf24" font-size="8" font-weight="bold" text-anchor="middle">OUT</text>
+            <text x="27" y="120" fill="#93c5fd" font-size="8" text-anchor="middle">24V</text>
+          </g>
+        </g>
+
+        <!-- ===================================================================== -->
+        <!-- 7. ATUADORES TÉRMICOS: AQUECEDOR PTC 150W E VENTOINHAS 6015          -->
+        <!-- ===================================================================== -->
+        <!-- Bloco do Aquecedor PTC 150W -->
+        <g id="mod-ptc" transform="translate(1360, 95)" filter="url(#shadowBox)">
+          <rect width="300" height="185" rx="10" fill="url(#gradPtcheater)" stroke="#e11d48" stroke-width="2.5"/>
+          <text x="150" y="26" fill="#fb7185" font-size="14" font-weight="bold" text-anchor="middle">AQUECEDOR PTC 150W</text>
+          <text x="150" y="42" fill="#94a3b8" font-size="10" text-anchor="middle">Carcaça Isolada com Ventoinha Própria</text>
+
+          <!-- Dissipador e Grade -->
+          <circle cx="75" cy="110" r="45" fill="#090d16" stroke="#475569" stroke-width="2"/>
+          <circle cx="75" cy="110" r="14" fill="#334155"/>
+          
+          <!-- Indicação dos 4 fios -->
+          <rect x="140" y="55" width="145" height="50" rx="4" fill="#1e293b" stroke="#ef4444"/>
+          <text x="212" y="72" fill="#fca5a5" font-size="10" font-weight="bold" text-anchor="middle">2 FIOS GROSSOS</text>
+          <text x="212" y="86" fill="#cbd5e1" font-size="9" text-anchor="middle">Resistência PTC (150W)</text>
+          <text x="212" y="98" fill="#facc15" font-size="8" text-anchor="middle">(+) no 24V / (-) no MOSFET OUT</text>
+
+          <rect x="140" y="115" width="145" height="50" rx="4" fill="#1e293b" stroke="#38bdf8"/>
+          <text x="212" y="132" fill="#7dd3fc" font-size="10" font-weight="bold" text-anchor="middle">2 FIOS FINOS</text>
+          <text x="212" y="146" fill="#cbd5e1" font-size="9" text-anchor="middle">Ventoinha do Aquecedor</text>
+          <text x="212" y="158" fill="#4ade80" font-size="8" font-weight="bold" text-anchor="middle">DIRETO NO 24V (Giro Contínuo)</text>
+        </g>
+
+        <!-- Termofusível Mecânico 75°C -->
+        <g id="mod-tf" transform="translate(1300, 160)" filter="url(#shadowBox)">
+          <rect width="45" height="22" rx="4" fill="#cbd5e1" stroke="#f1f5f9"/>
+          <text x="22" y="14" fill="#090d16" font-size="8" font-weight="bold" text-anchor="middle">75°C TF</text>
+        </g>
+
+        <!-- Ventoinhas de Purga (2x 6015 24V) -->
+        <g id="mod-fans" transform="translate(1360, 310)" filter="url(#shadowBox)">
+          <rect width="300" height="170" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+          <text x="150" y="24" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">2x VENTOINHAS DE PURGA 24V (6015)</text>
+          <text x="150" y="38" fill="#94a3b8" font-size="9" text-anchor="middle">Ligadas em Paralelo (+ no 24V / - no MOSFET 2 OUT)</text>
+
+          <!-- Fan 1 -->
+          <g transform="translate(25, 50)">
+            <rect width="110" height="100" rx="6" fill="#0f172a" stroke="#475569"/>
+            <circle cx="55" cy="45" r="30" fill="#1e293b" stroke="#64748b"/>
+            <circle cx="55" cy="45" r="10" fill="#38bdf8"/>
+            <text x="55" y="88" fill="#e2e8f0" font-size="9" font-weight="bold" text-anchor="middle">Admissão (Insufla)</text>
+          </g>
+
+          <!-- Fan 2 -->
+          <g transform="translate(165, 50)">
+            <rect width="110" height="100" rx="6" fill="#0f172a" stroke="#475569"/>
+            <circle cx="55" cy="45" r="30" fill="#1e293b" stroke="#64748b"/>
+            <circle cx="55" cy="45" r="10" fill="#38bdf8"/>
+            <text x="55" y="88" fill="#e2e8f0" font-size="9" font-weight="bold" text-anchor="middle">Exaustão (Retira)</text>
+          </g>
+        </g>
+
+        <!-- ===================================================================== -->
+        <!-- 8. DISPLAY TFT 2.4" SPI TOUCH (PCB VERMELHA ILI9341 + XPT2046)       -->
+        <!-- ===================================================================== -->
+        <g id="mod-display" transform="translate(640, 560)" filter="url(#shadowBox)">
+          <rect width="450" height="500" rx="12" fill="url(#gradDisplay)" stroke="#fca5a5" stroke-width="2"/>
+          
+          <rect x="20" y="15" width="410" height="38" rx="6" fill="#450a0a"/>
+          <text x="225" y="38" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">DISPLAY TFT 2.4" SPI COM TOUCH RESISTIVO</text>
+
+          <!-- Tela do LCD Simulando Mostradores -->
+          <rect x="25" y="65" width="220" height="320" rx="6" fill="#000" stroke="#334155" stroke-width="2"/>
+          <text x="135" y="95" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle">DRY FILA BOX 60L</text>
+          
+          <!-- Arcos Mostradores -->
+          <circle cx="135" cy="150" r="35" fill="none" stroke="#334155" stroke-width="8"/>
+          <circle cx="135" cy="150" r="35" fill="none" stroke="#ef4444" stroke-width="8" stroke-dasharray="140 220"/>
+          <text x="135" y="155" fill="#fff" font-size="13" font-weight="bold" text-anchor="middle">50.0°C</text>
+
+          <circle cx="85" cy="240" r="25" fill="none" stroke="#334155" stroke-width="6"/>
+          <circle cx="85" cy="240" r="25" fill="none" stroke="#38bdf8" stroke-width="6" stroke-dasharray="90 160"/>
+          <text x="85" y="244" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">18%</text>
+
+          <circle cx="185" cy="240" r="25" fill="none" stroke="#334155" stroke-width="6"/>
+          <circle cx="185" cy="240" r="25" fill="none" stroke="#eab308" stroke-width="6" stroke-dasharray="80 160"/>
+          <text x="185" y="244" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">14g/m³</text>
+
+          <rect x="40" y="300" width="80" height="25" rx="4" fill="#15803d"/>
+          <text x="80" y="316" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">PLA [50°C]</text>
+          <rect x="150" y="300" width="80" height="25" rx="4" fill="#1d4ed8"/>
+          <text x="190" y="316" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">PETG [60°C]</text>
+
+          <rect x="25" y="400" width="400" height="85" rx="6" fill="#450a0a" stroke="#ef4444"/>
+          <text x="225" y="420" fill="#fca5a5" font-size="11" font-weight="bold" text-anchor="middle">⚠️ ALERTA CRÍTICO DE QUEIMA DO BACKLIGHT:</text>
+          <text x="225" y="438" fill="#fff" font-size="10" text-anchor="middle">O pino <strong>LED</strong> deve ser ligado EXCLUSIVAMENTE ao <strong>3.3V</strong> (Borne 3.3).</text>
+          <text x="225" y="454" fill="#fca5a5" font-size="10" text-anchor="middle">NUNCA LIGUE EM 5V (queima irreversível dos LEDs internos).</text>
+          <text x="225" y="470" fill="#cbd5e1" font-size="9" text-anchor="middle">Pino T_IRQ: Deixar sem conexão (leitura é por polling no código).</text>
+
+          <!-- Barra de Pinos Impressa na Placa Vermelha -->
+          <g transform="translate(265, 65)">
+            <rect width="165" height="320" rx="6" fill="#1e293b" stroke="#cbd5e1"/>
+            <text x="82" y="18" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">PINOS DA TELA</text>
+
+            <text x="12" y="38" fill="#fff" font-size="9">1. VCC</text> <text x="155" y="38" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">3.3V ou 5V</text>
+            <text x="12" y="58" fill="#fff" font-size="9">2. GND</text> <text x="155" y="58" fill="#0284c7" font-size="8" font-weight="bold" text-anchor="end">Borne G</text>
+            <text x="12" y="78" fill="#fff" font-size="9">3. CS</text> <text x="155" y="78" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="end">Borne 10</text>
+            <text x="12" y="98" fill="#fff" font-size="9">4. RESET</text> <text x="155" y="98" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="end">Borne 14</text>
+            <text x="12" y="118" fill="#fff" font-size="9">5. DC</text> <text x="155" y="118" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="end">Borne 9</text>
+            <text x="12" y="138" fill="#fff" font-size="9">6. SDI (MOSI)</text> <text x="155" y="138" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 11 ⚑</text>
+            <text x="12" y="158" fill="#fff" font-size="9">7. SCK</text> <text x="155" y="158" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 12 ⚑</text>
+            <text x="12" y="178" fill="#fca5a5" font-size="9" font-weight="bold">8. LED</text> <text x="155" y="178" fill="#ef4444" font-size="8" font-weight="bold" text-anchor="end">Borne 3.3V ⚠️</text>
+            <text x="12" y="198" fill="#fff" font-size="9">9. SDO (MISO)</text> <text x="155" y="198" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 13 ⚑</text>
+            <text x="12" y="218" fill="#fff" font-size="9">10. T_CLK</text> <text x="155" y="218" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 12 ⚑</text>
+            <text x="12" y="238" fill="#fff" font-size="9">11. T_CS</text> <text x="155" y="238" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="end">Borne 8</text>
+            <text x="12" y="258" fill="#fff" font-size="9">12. T_DIN</text> <text x="155" y="258" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 11 ⚑</text>
+            <text x="12" y="278" fill="#fff" font-size="9">13. T_DO</text> <text x="155" y="278" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 13 ⚑</text>
+            <text x="12" y="298" fill="#94a3b8" font-size="9">14. T_IRQ</text> <text x="155" y="298" fill="#94a3b8" font-size="8" text-anchor="end">DESCONECTADO</text>
+          </g>
+        </g>
+
+        <!-- ===================================================================== -->
+        <!-- 9. SENSORES SHT31-D (I2C: INTERNO 0x44 E EXTERNO 0x45)                -->
+        <!-- ===================================================================== -->
+        <g id="mod-sensors" transform="translate(1160, 560)" filter="url(#shadowBox)">
+          <!-- Sensor 1: Interno (Estufa) -->
+          <g transform="translate(0, 0)">
+            <rect width="240" height="220" rx="8" fill="#1e293b" stroke="#eab308" stroke-width="2"/>
+            <text x="120" y="25" fill="#facc15" font-size="12" font-weight="bold" text-anchor="middle">SHT31-D #1 (INTERNO)</text>
+            <text x="120" y="42" fill="#94a3b8" font-size="10" text-anchor="middle">Fundo da Caixa • Endereço 0x44</text>
+            
+            <rect x="20" y="55" width="200" height="150" rx="4" fill="#0f172a" stroke="#334155"/>
+            <text x="30" y="80" fill="#c084fc" font-size="10">VIN: <strong>3.3V</strong> (Borne 3.3)</text>
+            <text x="30" y="105" fill="#0284c7" font-size="10">GND: <strong>GND</strong> (Borne G)</text>
+            <text x="30" y="130" fill="#eab308" font-size="10">SCL: <strong>Borne 5</strong> (GPIO 5)</text>
+            <text x="30" y="155" fill="#eab308" font-size="10">SDA: <strong>Borne 4</strong> (GPIO 4)</text>
+            <text x="30" y="180" fill="#38bdf8" font-size="10" font-weight="bold">ADDR: Ligado ao GND (0x44)</text>
+          </g>
+
+          <!-- Sensor 2: Externo (Ambiente) -->
+          <g transform="translate(260, 0)">
+            <rect width="240" height="220" rx="8" fill="#1e293b" stroke="#eab308" stroke-width="2"/>
+            <text x="120" y="25" fill="#facc15" font-size="12" font-weight="bold" text-anchor="middle">SHT31-D #2 (EXTERNO)</text>
+            <text x="120" y="42" fill="#94a3b8" font-size="10" text-anchor="middle">Saída de Purga • Endereço 0x45</text>
+            
+            <rect x="20" y="55" width="200" height="150" rx="4" fill="#0f172a" stroke="#334155"/>
+            <text x="30" y="80" fill="#c084fc" font-size="10">VIN: <strong>3.3V</strong> (Borne 3.3)</text>
+            <text x="30" y="105" fill="#0284c7" font-size="10">GND: <strong>GND</strong> (Borne G)</text>
+            <text x="30" y="130" fill="#eab308" font-size="10">SCL: <strong>Borne 5</strong> (GPIO 5)</text>
+            <text x="30" y="155" fill="#eab308" font-size="10">SDA: <strong>Borne 4</strong> (GPIO 4)</text>
+            <text x="30" y="180" fill="#ec4899" font-size="10" font-weight="bold">ADDR: Ligado ao 3.3V (0x45)</text>
+          </g>
+        </g>
+
+        <!-- ===================================================================== -->
+        <!-- TRILHAS DE FIAÇÃO E CONEXÕES FÍSICAS                                 -->
+        <!-- ===================================================================== -->
+
+        <!-- 1. FIAÇÃO AC (REDE -> FONTE 24V) -->
+        <g id="wires-ac" class="wire group-ac">
+          <!-- Fase L -->
+          <path d="M 85 210 L 85 240 L 340 240 L 340 195" fill="none" stroke="#b45309" stroke-width="4" stroke-linecap="round"/>
+          <!-- Neutro N -->
+          <path d="M 125 210 L 125 255 L 385 255 L 385 195" fill="none" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+          <!-- Terra PE -->
+          <path d="M 165 210 L 165 270 L 430 270 L 430 195" fill="none" stroke="#22c55e" stroke-width="4" stroke-linecap="round"/>
+        </g>
+
+        <!-- 2. FIAÇÃO +24V PRINCIPAL (FONTE -> FUSÍVEL -> WAGO) -->
+        <g id="wires-power-24v" class="wire group-power">
+          <!-- +24V saindo da fonte para o porta fusível -->
+          <path d="M 550 245 L 640 245" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/>
+          <!-- Saindo do fusível para WAGO +24V -->
+          <path d="M 750 230 L 780 230 L 780 180 L 800 180" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/>
+
+          <!-- WAGO +24V ramificações: -->
+          <!-- Ramal Step-Down IN+ -->
+          <path d="M 850 215 L 850 320 L 668 320 L 668 472" fill="none" stroke="#dc2626" stroke-width="3"/>
+          <!-- Ramal MOSFET 1 V+ -->
+          <path d="M 920 180 L 1237 180 L 1237 155" fill="none" stroke="#dc2626" stroke-width="4"/>
+          <!-- Ramal MOSFET 2 V+ -->
+          <path d="M 900 180 L 960 180 L 960 375 L 1237 375 L 1237 355" fill="none" stroke="#dc2626" stroke-width="4"/>
+          <!-- Ramal PTC Resistência (+) via Termofusível -->
+          <path d="M 875 180 L 875 80 L 1300 80 L 1300 170" fill="none" stroke="#dc2626" stroke-width="5"/>
+          <path d="M 1345 170 L 1572 170 L 1572 150" fill="none" stroke="#dc2626" stroke-width="5"/>
+          <!-- Ramal Ventoinha Interna do PTC (+) Direto -->
+          <path d="M 1300 80 L 1640 80 L 1640 210" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+          <!-- Ramal Ventoinhas de Purga (+) Direto -->
+          <path d="M 960 375 L 960 495 L 1415 495 L 1415 460" fill="none" stroke="#dc2626" stroke-width="3"/>
+          <path d="M 1415 495 L 1555 495 L 1555 460" fill="none" stroke="#dc2626" stroke-width="3"/>
+        </g>
+
+        <!-- 3. FIAÇÃO GND UNIFICADO -->
+        <g id="wires-gnd" class="wire group-gnd">
+          <!-- Fonte -V saindo para o WAGO GND -->
+          <path d="M 495 245 L 495 290 L 800 290" fill="none" stroke="#0284c7" stroke-width="6" stroke-linecap="round"/>
+          
+          <!-- WAGO GND Ramificações: -->
+          <!-- GND para Step-Down IN- -->
+          <path d="M 825 295 L 825 340 L 698 340 L 698 472" fill="none" stroke="#0284c7" stroke-width="3"/>
+          <!-- GND para MOSFET 1 V- -->
+          <path d="M 875 290 L 980 290 L 980 215 L 1237 215 L 1237 200" fill="none" stroke="#0284c7" stroke-width="4"/>
+          <!-- GND para MOSFET 2 V- -->
+          <path d="M 875 290 L 980 290 L 980 415 L 1237 415 L 1237 400" fill="none" stroke="#0284c7" stroke-width="4"/>
+          <!-- GND para Ventoinha do PTC (-) Direto -->
+          <path d="M 980 290 L 980 60 L 1670 60 L 1670 210" fill="none" stroke="#0284c7" stroke-width="2.5"/>
+          <!-- GND unificado para o ESP32-S3 Borne G -->
+          <path d="M 800 270 L 610 270 L 610 560 L 412 560" fill="none" stroke="#0284c7" stroke-width="4"/>
+        </g>
+
+        <!-- 4. LINHA REGULADA 5.00V (STEP-DOWN -> ESP32-S3) -->
+        <g id="wires-power-5v" class="wire group-power">
+          <path d="M 858 485 L 858 530 L 412 530" fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round"/>
+          <!-- Retorno GND do Step-Down para o Borne G -->
+          <path d="M 888 485 L 888 545 L 420 545 L 420 560" fill="none" stroke="#0284c7" stroke-width="3" stroke-dasharray="6 3"/>
+        </g>
+
+        <!-- 5. LINHA REGULADA 3.3V (ESP32-S3 -> DISPLAY, BACKLIGHT E SENSORES) -->
+        <g id="wires-power-3v3" class="wire group-power">
+          <!-- Borne 3.3V saindo -->
+          <path d="M 412 937 L 540 937" fill="none" stroke="#a855f7" stroke-width="3.5"/>
+          <!-- Para o pino LED do Display (3.3V OBRIGATÓRIO!) -->
+          <path d="M 540 937 L 540 738 L 652 738" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="8 4"/>
+          <!-- Para o pino VCC do Display -->
+          <path d="M 540 738 L 540 598 L 652 598" fill="none" stroke="#a855f7" stroke-width="3"/>
+          <!-- Para os Sensores SHT31 -->
+          <path d="M 540 937 L 540 1080 L 1180 1080 L 1180 640" fill="none" stroke="#a855f7" stroke-width="3"/>
+          <path d="M 1180 1080 L 1440 1080 L 1440 640" fill="none" stroke="#a855f7" stroke-width="3"/>
+        </g>
+
+        <!-- 6. SINAIS PWM (GPIO 6 E 7 -> MOSFETS 1 E 2) -->
+        <g id="wires-pwm" class="wire group-pwm">
+          <!-- Borne 6 (PWM PTC) para Módulo MOSFET 1 -->
+          <path d="M 412 660 L 580 660 L 580 85 L 1037 85 L 1037 165" fill="none" stroke="#22c55e" stroke-width="3.5" stroke-linecap="round"/>
+          <!-- Borne G (GND sinal) para MOSFET 1 -->
+          <path d="M 412 560 L 595 560 L 595 105 L 1037 105 L 1037 195" fill="none" stroke="#64748b" stroke-width="2.5"/>
+
+          <!-- Borne 7 (PURGA) para Módulo MOSFET 2 -->
+          <path d="M 412 690 L 565 690 L 565 340 L 1037 340 L 1037 365" fill="none" stroke="#4ade80" stroke-width="3.5" stroke-linecap="round"/>
+          <!-- Borne G (GND sinal) para MOSFET 2 -->
+          <path d="M 595 560 L 595 380 L 1037 380 L 1037 395" fill="none" stroke="#64748b" stroke-width="2.5"/>
+        </g>
+
+        <!-- 7. CHAVEAMENTO NEGATIVO (OUT DO MOSFET -> CARGAS) -->
+        <g id="wires-switched" class="wire group-switched">
+          <!-- MOSFET 1 OUT -> Fio Grosso Negativo do PTC -->
+          <path d="M 1264 242 L 1330 242 L 1330 215 L 1480 215 L 1480 150" fill="none" stroke="#f97316" stroke-width="5" stroke-linecap="round"/>
+          
+          <!-- MOSFET 2 OUT -> Fios Pretos Negativos das Ventoinhas 6015 -->
+          <path d="M 1264 442 L 1330 442 L 1330 475 L 1450 475 L 1450 460" fill="none" stroke="#f97316" stroke-width="4" stroke-linecap="round"/>
+          <path d="M 1450 475 L 1590 475 L 1590 460" fill="none" stroke="#f97316" stroke-width="4" stroke-linecap="round"/>
+        </g>
+
+        <!-- 8. BARRAMENTO I2C (GPIO 4 SDA & GPIO 5 SCL -> SHT31 DUPLO) -->
+        <g id="wires-i2c" class="wire group-i2c">
+          <!-- Borne 4 (SDA Amarelo) -->
+          <path d="M 412 595 L 530 595 L 530 1100 L 1220 1100 L 1220 715" fill="none" stroke="#eab308" stroke-width="3"/>
+          <path d="M 1220 1100 L 1480 1100 L 1480 715" fill="none" stroke="#eab308" stroke-width="3"/>
+
+          <!-- Borne 5 (SCL Laranja) -->
+          <path d="M 412 625 L 515 625 L 515 1115 L 1240 1115 L 1240 690" fill="none" stroke="#f59e0b" stroke-width="3"/>
+          <path d="M 1240 1115 L 1500 1115 L 1500 690" fill="none" stroke="#f59e0b" stroke-width="3"/>
+        </g>
+
+        <!-- 9. BARRAMENTO SPI E CONTROLE DO DISPLAY TFT TOUCH -->
+        <g id="wires-spi" class="wire group-spi">
+          <!-- Borne 8 (Touch T_CS) -->
+          <path d="M 412 725 L 620 725 L 620 798 L 652 798" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+          <!-- Borne 9 (TFT DC) -->
+          <path d="M 412 755 L 605 755 L 605 678 L 652 678" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+          <!-- Borne 10 (TFT CS) -->
+          <path d="M 412 785 L 590 785 L 590 638 L 652 638" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+          <!-- Borne 11 (MOSI: SDI + T_DIN) -->
+          <path d="M 412 820 L 575 820 L 575 698 L 652 698" fill="none" stroke="#c084fc" stroke-width="3"/>
+          <path d="M 575 698 L 575 818 L 652 818" fill="none" stroke="#c084fc" stroke-width="3"/>
+          <!-- Borne 12 (SCK: SCK + T_CLK) -->
+          <path d="M 412 850 L 560 850 L 560 718 L 652 718" fill="none" stroke="#c084fc" stroke-width="3"/>
+          <path d="M 560 718 L 560 778 L 652 778" fill="none" stroke="#c084fc" stroke-width="3"/>
+          <!-- Borne 13 (MISO: SDO + T_DO) -->
+          <path d="M 412 880 L 545 880 L 545 758 L 652 758" fill="none" stroke="#c084fc" stroke-width="3"/>
+          <path d="M 545 758 L 545 838 L 652 838" fill="none" stroke="#c084fc" stroke-width="3"/>
+          <!-- Borne 14 (TFT RESET) -->
+          <path d="M 412 910 L 530 910 L 530 658 L 652 658" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <!-- SEÇÕES DE DETALHAMENTO TÉCNICO, GUIA DE LIGAÇÃO E BITOLAS -->
+  <div class="sections-container">
+
+    <!-- CARDS DE INSTRUÇÃO E SEGURANÇA -->
+    <div class="grid-cards">
+      
+      <!-- Card Step-Down -->
+      <div class="card card-danger">
+        <h3>⚡ 1. Procedimento Step-Down LM2596</h3>
+        <p><strong>ATENÇÃO MÁXIMA ANTES DE LIGAR O ESP32-S3:</strong></p>
+        <ul>
+          <li>Ligue os fios de entrada 24V nos bornes <code>IN+</code> e <code>IN-</code> do LM2596.</li>
+          <li>Pressione o botão <strong>S1</strong> até que o LED <strong>OUT</strong> acenda no voltímetro digital.</li>
+          <li>Com uma chave de fenda pequena, gire o parafuso do trimpot azul <code>W103</code> no sentido anti-horário até cravar <strong>5.00V</strong> no display.</li>
+          <li>Confira a tensão com um multímetro nos bornes de saída.</li>
+          <li><strong>Somente após confirmar 5.00V</strong>, conecte os fios ao borne <strong>5V</strong> e <strong>G</strong> do ESP32-S3.</li>
+        </ul>
+      </div>
+
+      <!-- Card Display TFT -->
+      <div class="card card-warning">
+        <h3>📺 2. Display TFT 2.4" SPI & Touch</h3>
+        <p><strong>CUIDADO COM BACKLIGHT E PARES DE FIAÇÃO:</strong></p>
+        <ul>
+          <li><span class="tag-danger">LED Backlight</span>: Ligue EXCLUSIVAMENTE ao borne <strong>3.3V</strong>. Ligar em 5V queima a iluminação!</li>
+          <li><span class="tag-warn">Pinos em Par (Torcidos)</span>: Junte as pontas e aperte no mesmo parafuso do borne:
+            <ul>
+              <li><code>SCK</code> + <code>T_CLK</code> juntos no <strong>Borne 12</strong></li>
+              <li><code>SDI</code> + <code>T_DIN</code> juntos no <strong>Borne 11</strong></li>
+              <li><code>SDO</code> + <code>T_DO</code> juntos no <strong>Borne 13</strong></li>
+            </ul>
+          </li>
+          <li>Pino <strong>T_IRQ</strong>: Fica desconectado (o firmware lê o touch por polling contínuo).</li>
+        </ul>
+      </div>
+
+      <!-- Card Módulos MOSFET -->
+      <div class="card card-success">
+        <h3>🔥 3. Módulos MOSFET & Cargas 24V</h3>
+        <p><strong>CHAVEAMENTO LOW-SIDE E VENTILAÇÃO:</strong></p>
+        <ul>
+          <li>O módulo HW-532 chaveia o <strong>polo negativo</strong> através do borne <code>OUT</code>.</li>
+          <li><strong>Aquecedor PTC (150W)</strong>:
+            <ul>
+              <li>2 fios grossos: (+) vai ao 24V passando pelo <strong>Termofusível de 75°C</strong>; (-) vai ao <strong>OUT</strong> do MOSFET 1.</li>
+              <li>2 fios finos da ventoinha do PTC: vão <strong>direto no 24V contínuo</strong> (nunca no MOSFET!).</li>
+            </ul>
+          </li>
+          <li><strong>Ventoinhas de Purga</strong>: Fios vermelhos (+) no 24V permanente; fios pretos (-) juntos no <strong>OUT</strong> do MOSFET 2.</li>
+        </ul>
+      </div>
+
+      <!-- Card Sensores SHT31 -->
+      <div class="card card-purple">
+        <h3>🌡️ 4. Sensores Duplos SHT31-D</h3>
+        <p><strong>CONFIGURAÇÃO DOS ENDEREÇOS I2C:</strong></p>
+        <ul>
+          <li>Ambos compartilham <strong>3.3V</strong>, <strong>GND</strong>, <strong>SDA (Borne 4)</strong> e <strong>SCL (Borne 5)</strong>.</li>
+          <li><strong>Sensor 1 (Interno da Estufa)</strong>: Pino <code>ADDR</code> soldado/ligado ao <strong>GND</strong> $\rightarrow$ Responde no endereço <code>0x44</code>.</li>
+          <li><strong>Sensor 2 (Externo / Purga)</strong>: Pino <code>ADDR</code> soldado/ligado ao <strong>3.3V</strong> $\rightarrow$ Responde no endereço <code>0x45</code>.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- TABELA GERAL DE PINAGEM ESP32-S3 -->
+    <div class="card">
+      <h3>📌 Mapeamento Consolidado dos Bornes do ESP32-S3 (Régua Direita)</h3>
+      <p>Todas as conexões externas foram alocadas na régua direita de bornes parafusados para facilidade de chicoteamento e proteção da placa.</p>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Borne na Placa</th>
+              <th>Pino ESP32-S3</th>
+              <th>Função do Circuito</th>
+              <th>Dispositivo Conectado</th>
+              <th>Bitola Sugerida</th>
+              <th>Observação Crítica</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge-pin">5V</span></td>
+              <td>5V IN</td>
+              <td>Alimentação Principal</td>
+              <td>Saída OUT+ do Step-Down</td>
+              <td>0,50 mm² (20 AWG)</td>
+              <td>Rigorosamente regulado em 5.00V</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">G</span></td>
+              <td>GND</td>
+              <td>Terra de Referência</td>
+              <td>WAGO GND (Terra Unificado)</td>
+              <td>0,50 mm² (20 AWG)</td>
+              <td>Comum a todos os módulos</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">4</span></td>
+              <td>GPIO 4</td>
+              <td>I2C SDA</td>
+              <td>Pino SDA dos 2x SHT31</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>Barramento compartilhado</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">5</span></td>
+              <td>GPIO 5</td>
+              <td>I2C SCL</td>
+              <td>Pino SCL dos 2x SHT31</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>Barramento compartilhado</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">6</span></td>
+              <td>GPIO 6</td>
+              <td>PWM LEDC (1 kHz)</td>
+              <td>PWM do MOSFET 1 (PTC)</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>Sinal de chaveamento PID</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">7</span></td>
+              <td>GPIO 7</td>
+              <td>Saída Digital</td>
+              <td>PWM do MOSFET 2 (Purga)</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>Acionamento das ventoinhas</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">8</span></td>
+              <td>GPIO 8</td>
+              <td>SPI CS</td>
+              <td>Touch T_CS</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>Habilita leitura do XPT2046</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">9</span></td>
+              <td>GPIO 9</td>
+              <td>Controle Gráfico</td>
+              <td>TFT DC / RS</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>Comando / Dados ILI9341</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">10</span></td>
+              <td>GPIO 10</td>
+              <td>SPI CS</td>
+              <td>TFT CS</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>Habilita display gráfico</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">11</span></td>
+              <td>GPIO 11</td>
+              <td>SPI MOSI</td>
+              <td>TFT SDI + Touch T_DIN</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>Dois fios juntos no mesmo borne</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">12</span></td>
+              <td>GPIO 12</td>
+              <td>SPI SCK</td>
+              <td>TFT SCK + Touch T_CLK</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>Dois fios juntos no mesmo borne</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">13</span></td>
+              <td>GPIO 13</td>
+              <td>SPI MISO</td>
+              <td>TFT SDO + Touch T_DO</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>Dois fios juntos no mesmo borne</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">14</span></td>
+              <td>GPIO 14</td>
+              <td>Reset Hardware</td>
+              <td>TFT RESET</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>Reinicia controlador da tela</td>
+            </tr>
+            <tr>
+              <td><span class="badge-pin">3.3</span></td>
+              <td>3.3V OUT</td>
+              <td>Alimentação Lógica</td>
+              <td>SHT31 (VIN), TFT VCC e TFT LED</td>
+              <td>24 a 26 AWG (Jumper)</td>
+              <td>O pino LED da tela DEVE ficar aqui!</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TABELA DE BITOLAS DE CABOS CALCULADAS -->
+    <div class="card">
+      <h3>📏 Dimensionamento e Cálculo de Bitolas de Cabos (NBR 5410 / AWG)</h3>
+      <p>Cálculo baseado em operação contínua 24/7 com densidade de corrente segura ($J \le 5,0\text{ A/mm}^2$) e queda de tensão inferior a $1\%$.</p>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Circuito / Trecho</th>
+              <th>Tensão</th>
+              <th>Corrente Máx.</th>
+              <th>Distância</th>
+              <th>Bitola Mínima</th>
+              <th>Bitola Recomendada (Comercial)</th>
+              <th>Queda de Tensão (ΔV)</th>
+              <th>Função / Dica de Montagem</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Rede AC (Tomada $\rightarrow$ Fonte)</strong></td>
+              <td>110V / 220V</td>
+              <td>2,7A (110V) / 1,4A (220V)</td>
+              <td>1,5 m</td>
+              <td>0,50 mm²</td>
+              <td><strong>0,75 mm² a 1,0 mm² Tripolar</strong></td>
+              <td>&lt; 0,3%</td>
+              <td>Cabo com plugue 3 pinos 10A NBR 14136</td>
+            </tr>
+            <tr>
+              <td><strong>Linha Tronco 24V (Fonte $\rightarrow$ WAGO)</strong></td>
+              <td>24V DC</td>
+              <td>7,0A (Pico 8,5A)</td>
+              <td>0,5 m</td>
+              <td>0,85 mm²</td>
+              <td><strong>1,5 mm² (16 AWG)</strong></td>
+              <td>0,08 V (0,33%)</td>
+              <td>Cabo flexível vermelho e preto cobre puro</td>
+            </tr>
+            <tr>
+              <td><strong>Ramal do Aquecedor PTC 150W</strong></td>
+              <td>24V DC</td>
+              <td>6,25A</td>
+              <td>1,0 m</td>
+              <td>1,00 mm²</td>
+              <td><strong>1,5 mm² (16 AWG) Silicone</strong></td>
+              <td>0,15 V (0,61%)</td>
+              <td>Preferência para capa de silicone resistente a calor</td>
+            </tr>
+            <tr>
+              <td><strong>Ventoinhas de Purga (2x 6015)</strong></td>
+              <td>24V DC</td>
+              <td>0,40A</td>
+              <td>1,5 m</td>
+              <td>0,15 mm²</td>
+              <td><strong>0,50 mm² (20 AWG)</strong></td>
+              <td>0,04 V (0,17%)</td>
+              <td>Cabo paralelo bicolor flexível</td>
+            </tr>
+            <tr>
+              <td><strong>Ventoinha Própria do PTC</strong></td>
+              <td>24V DC</td>
+              <td>0,15A</td>
+              <td>0,8 m</td>
+              <td>0,10 mm²</td>
+              <td><strong>0,50 mm² (20 AWG)</strong></td>
+              <td>0,01 V (0,04%)</td>
+              <td>Ligada direta no 24V para giro perpétuo</td>
+            </tr>
+            <tr>
+              <td><strong>Alimentação 5V (Step-Down $\rightarrow$ ESP32)</strong></td>
+              <td>5,0V DC</td>
+              <td>0,50A</td>
+              <td>0,2 m</td>
+              <td>0,15 mm²</td>
+              <td><strong>0,50 mm² (20 AWG)</strong></td>
+              <td>0,007 V (0,14%)</td>
+              <td>Fios curtos direto aos bornes 5V e G</td>
+            </tr>
+            <tr>
+              <td><strong>Barramentos de Sinal (SPI, I2C, PWM)</strong></td>
+              <td>3,3V</td>
+              <td>&lt; 0,08A</td>
+              <td>0,3 a 0,8 m</td>
+              <td>0,05 mm²</td>
+              <td><strong>24 a 26 AWG (Jumpers)</strong></td>
+              <td>Desprezível</td>
+              <td>Kit de jumpers fêmea-fêmea e fêmea-macho 20cm</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CHECKLIST DE MONTAGEM E TESTE INICIAL -->
+    <div class="checklist-card">
+      <h3>✅ Checklist Interativo de Montagem & Primeiro Boot</h3>
+      <p>Marque cada etapa conforme você executa na bancada (seu progresso fica salvo no navegador):</p>
+      
+      <div class="progress-bar-bg">
+        <div id="checklistProgress" class="progress-bar-fill"></div>
+      </div>
+
+      <div id="checklistItems">
+        <label class="checklist-item">
+          <input type="checkbox" onchange="updateChecklist()">
+          <span><strong>1. Seletor de Tensão da Fonte:</strong> Verifique se a chave lateral da fonte 24V está na posição correta da sua tomada (110V ou 220V).</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" onchange="updateChecklist()">
+          <span><strong>2. Fiação de Entrada AC:</strong> Conecte Fase (L), Neutro (N) e Terra (⏚) com terminais bem prensados e sem fios soltos.</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" onchange="updateChecklist()">
+          <span><strong>3. Fusível de Proteção Geral:</strong> Insira o fusível lâmina de 10A no porta-fusível chicote da perna positiva (+24V).</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" onchange="updateChecklist()">
+          <span><strong>4. Calibração do Step-Down LM2596:</strong> Ligue o step-down em 24V. Com botão S1 e trimpot W103, regule para exatos 5.00V antes de ligar o ESP32!</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" onchange="updateChecklist()">
+          <span><strong>5. Alimentação do ESP32-S3:</strong> Conecte o 5.00V regulado no borne 5V e o GND no borne G. Confirme que o LED da placa acendeu.</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" onchange="updateChecklist()">
+          <span><strong>6. Termofusível 75°C no Aquecedor PTC:</strong> Fixe o termofusível diretamente na carcaça de alumínio do PTC usando fita Kapton e ligue em série no (+) da resistência.</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" onchange="updateChecklist()">
+          <span><strong>7. Ventoinha Interna do PTC:</strong> Conecte os fios finos do PTC direto no 24V permanente para garantir refrigeração contínua.</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" onchange="updateChecklist()">
+          <span><strong>8. Display TFT Backlight:</strong> Verifique se o pino LED do display está no 3.3V (NUNCA NO 5V).</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" onchange="updateChecklist()">
+          <span><strong>9. Endereços dos Sensores SHT31:</strong> Confirme ADDR no GND para Sensor Interno (0x44) e ADDR no 3.3V para Sensor Externo (0x45).</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" onchange="updateChecklist()">
+          <span><strong>10. Terra Unificado:</strong> Certifique-se de que o GND da fonte, GND do Step-Down, Borne G do ESP32 e V- dos MOSFETs estão interligados.</span>
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    Drybox 60L Pro • Firmware v3.1 ESP32-S3 N16R8 • Criado para Guilherme • Totalmente documentado em Português
+  </footer>
+
+  <!-- SCRIPT DE INTERATIVIDADE -->
+  <script>
+    function filterWires(category) {
+      // Atualiza botões
+      const buttons = document.querySelectorAll('.btn-filter');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const allWires = document.querySelectorAll('.wire');
+
+      if (category === 'all') {
+        allWires.forEach(w => {
+          w.classList.remove('dimmed', 'highlighted');
+        });
+        return;
+      }
+
+      // Diminui todos e destaca a categoria escolhida
+      allWires.forEach(w => {
+        if (w.classList.contains('group-' + category)) {
+          w.classList.remove('dimmed');
+          w.classList.add('highlighted');
+        } else {
+          w.classList.remove('highlighted');
+          w.classList.add('dimmed');
+        }
+      });
+    }
+
+    // CHECKLIST LOCAL STORAGE
+    function updateChecklist() {
+      const items = document.querySelectorAll('#checklistItems input[type="checkbox"]');
+      let checkedCount = 0;
+      const states = [];
+
+      items.forEach((item, index) => {
+        const parent = item.parentElement;
+        if (item.checked) {
+          checkedCount++;
+          parent.classList.add('done');
+          states.push(true);
+        } else {
+          parent.classList.remove('done');
+          states.push(false);
+        }
+      });
+
+      const percent = Math.round((checkedCount / items.length) * 100);
+      document.getElementById('checklistProgress').style.width = percent + '%';
+      localStorage.setItem('drybox_checklist_v1', JSON.stringify(states));
+    }
+
+    // Carregar progresso ao abrir página
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('drybox_checklist_v1');
+      if (saved) {
+        try {
+          const states = JSON.parse(saved);
+          const items = document.querySelectorAll('#checklistItems input[type="checkbox"]');
+          items.forEach((item, index) => {
+            if (states[index]) {
+              item.checked = true;
+              item.parentElement.classList.add('done');
+            }
+          });
+          const checkedCount = states.filter(Boolean).length;
+          const percent = Math.round((checkedCount / items.length) * 100);
+          document.getElementById('checklistProgress').style.width = percent + '%';
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

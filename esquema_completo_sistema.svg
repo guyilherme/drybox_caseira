@@ -1,0 +1,484 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 1150" width="1700" height="1150" style="background:#080d1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <filter id="shadowBox" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="3" dy="6" stdDeviation="7" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+    <linearGradient id="gradPsu" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="gradEsp" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="gradMosfet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181b"/>
+      <stop offset="100%" stop-color="#09090b"/>
+    </linearGradient>
+    <linearGradient id="gradDisplay" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#991b1b"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <linearGradient id="gradPtcheater" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#262626"/>
+      <stop offset="100%" stop-color="#171717"/>
+    </linearGradient>
+  </defs>
+
+  <!-- FUNDO E CABEÇALHO DO SVG -->
+  <rect x="0" y="0" width="1700" height="70" fill="#0f172a" />
+  <line x1="0" y1="70" x2="1700" y2="70" stroke="#334155" stroke-width="2"/>
+  <text x="850" y="38" fill="#38bdf8" font-size="24" font-weight="bold" text-anchor="middle">ESQUEMA DE LIGAÇÃO COMPLETO DE PONTA A PONTA • DRYBOX 60L PRO</text>
+  <text x="850" y="58" fill="#94a3b8" font-size="13" text-anchor="middle">ESP32-S3 N16R8 • Fonte Industrial 24V 250W • Step-Down LM2596 (5V) • Módulos HW-532 • PTC 150W • 2x SHT31 • TFT 2.4" Touch</text>
+
+  <!-- 1. ENTRADA DE REDE AC (110V / 220V) -->
+  <g id="mod-ac" transform="translate(40, 100)" filter="url(#shadowBox)">
+    <rect width="210" height="150" rx="8" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+    <rect x="10" y="10" width="190" height="32" rx="4" fill="#0f172a"/>
+    <text x="105" y="32" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">REDE ELÉTRICA AC</text>
+    <text x="105" y="60" fill="#94a3b8" font-size="11" text-anchor="middle">Tomada Tripolar NBR 14136</text>
+    <text x="105" y="76" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">110V ou 220V (10A)</text>
+    
+    <g transform="translate(20, 95)">
+      <rect width="45" height="35" rx="4" fill="#78350f" stroke="#b45309"/>
+      <text x="22" y="18" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">FASE</text>
+      <text x="22" y="30" fill="#fef3c7" font-size="9" text-anchor="middle">(L)</text>
+    </g>
+    <g transform="translate(80, 95)">
+      <rect width="45" height="35" rx="4" fill="#1e3a8a" stroke="#3b82f6"/>
+      <text x="22" y="18" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">NEUTRO</text>
+      <text x="22" y="30" fill="#dbeafe" font-size="9" text-anchor="middle">(N)</text>
+    </g>
+    <g transform="translate(140, 95)">
+      <rect width="45" height="35" rx="4" fill="#14532d" stroke="#22c55e"/>
+      <text x="22" y="18" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">TERRA</text>
+      <text x="22" y="30" fill="#dcfce7" font-size="9" text-anchor="middle">(⏚)</text>
+    </g>
+  </g>
+
+  <!-- 2. FONTE INDUSTRIAL 24V 250W -->
+  <g id="mod-psu" transform="translate(300, 100)" filter="url(#shadowBox)">
+    <rect width="300" height="200" rx="8" fill="url(#gradPsu)" stroke="#64748b" stroke-width="2"/>
+    <rect x="15" y="12" width="270" height="36" rx="4" fill="#0f172a"/>
+    <text x="150" y="36" fill="#f8fafc" font-size="15" font-weight="bold" text-anchor="middle">FONTE CHAVEADA 24V</text>
+    <text x="150" y="65" fill="#94a3b8" font-size="12" text-anchor="middle">Potência: 250W • Saída: 24V DC / 10.4A</text>
+    <text x="150" y="82" fill="#cbd5e1" font-size="10" text-anchor="middle">(Ajuste o seletor 110V/220V na lateral)</text>
+    
+    <rect x="15" y="115" width="270" height="70" rx="6" fill="#090d16" stroke="#475569"/>
+    
+    <circle cx="40" cy="145" r="12" fill="#78350f" stroke="#b45309" stroke-width="2"/>
+    <text x="40" y="149" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">L</text>
+    <text x="40" y="172" fill="#94a3b8" font-size="9" text-anchor="middle">Fase</text>
+
+    <circle cx="85" cy="145" r="12" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2"/>
+    <text x="85" y="149" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">N</text>
+    <text x="85" y="172" fill="#94a3b8" font-size="9" text-anchor="middle">Neutro</text>
+
+    <circle cx="130" cy="145" r="12" fill="#14532d" stroke="#22c55e" stroke-width="2"/>
+    <text x="130" y="149" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">⏚</text>
+    <text x="130" y="172" fill="#94a3b8" font-size="9" text-anchor="middle">Terra</text>
+
+    <circle cx="195" cy="145" r="14" fill="#0284c7" stroke="#38bdf8" stroke-width="2"/>
+    <text x="195" y="149" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">-V</text>
+    <text x="195" y="172" fill="#38bdf8" font-size="9" font-weight="bold" text-anchor="middle">GND</text>
+
+    <circle cx="250" cy="145" r="14" fill="#dc2626" stroke="#f87171" stroke-width="2"/>
+    <text x="250" y="149" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">+V</text>
+    <text x="250" y="172" fill="#f87171" font-size="9" font-weight="bold" text-anchor="middle">+24V</text>
+  </g>
+
+  <!-- 3. FUSÍVEL 10A E WAGO -->
+  <g id="mod-fuse" transform="translate(640, 200)" filter="url(#shadowBox)">
+    <rect width="110" height="60" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+    <rect x="25" y="12" width="60" height="24" rx="4" fill="#dc2626"/>
+    <text x="55" y="28" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">10A</text>
+    <text x="55" y="50" fill="#fca5a5" font-size="9" text-anchor="middle">Fusível Lâmina</text>
+  </g>
+
+  <g id="mod-wago" transform="translate(800, 150)" filter="url(#shadowBox)">
+    <rect width="120" height="65" rx="6" fill="#450a0a" stroke="#dc2626" stroke-width="2"/>
+    <text x="60" y="25" fill="#fca5a5" font-size="11" font-weight="bold" text-anchor="middle">WAGO +24V</text>
+    <circle cx="25" cy="45" r="8" fill="#dc2626"/>
+    <circle cx="50" cy="45" r="8" fill="#dc2626"/>
+    <circle cx="75" cy="45" r="8" fill="#dc2626"/>
+    <circle cx="100" cy="45" r="8" fill="#dc2626"/>
+
+    <g transform="translate(0, 80)">
+      <rect width="120" height="65" rx="6" fill="#082f49" stroke="#0284c7" stroke-width="2"/>
+      <text x="60" y="25" fill="#bae6fd" font-size="11" font-weight="bold" text-anchor="middle">WAGO GND</text>
+      <circle cx="25" cy="45" r="8" fill="#0284c7"/>
+      <circle cx="50" cy="45" r="8" fill="#0284c7"/>
+      <circle cx="75" cy="45" r="8" fill="#0284c7"/>
+      <circle cx="100" cy="45" r="8" fill="#0284c7"/>
+    </g>
+  </g>
+
+  <!-- 4. STEP-DOWN LM2596 -->
+  <g id="mod-stepdown" transform="translate(640, 360)" filter="url(#shadowBox)">
+    <rect width="280" height="150" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
+    <text x="140" y="25" fill="#60a5fa" font-size="13" font-weight="bold" text-anchor="middle">REGULADOR STEP-DOWN LM2596</text>
+    <text x="140" y="42" fill="#94a3b8" font-size="10" text-anchor="middle">Conversor DC-DC com Voltímetro Integrado</text>
+
+    <rect x="90" y="55" width="100" height="42" rx="4" fill="#000" stroke="#dc2626"/>
+    <text x="140" y="85" fill="#ef4444" font-size="20" font-family="monospace" font-weight="bold" text-anchor="middle">5.00v</text>
+
+    <circle cx="60" cy="76" r="10" fill="#334155" stroke="#94a3b8"/>
+    <text x="60" y="105" fill="#cbd5e1" font-size="9" text-anchor="middle">Botão S1</text>
+
+    <rect x="215" y="65" width="22" height="22" rx="2" fill="#1d4ed8" stroke="#93c5fd"/>
+    <circle cx="226" cy="76" r="4" fill="#facc15"/>
+    <text x="226" y="105" fill="#cbd5e1" font-size="9" text-anchor="middle">Trimpot W103</text>
+
+    <rect x="15" y="112" width="60" height="26" rx="3" fill="#0f172a" stroke="#475569"/>
+    <circle cx="28" cy="125" r="6" fill="#dc2626"/>
+    <circle cx="58" cy="125" r="6" fill="#0284c7"/>
+    <text x="45" y="148" fill="#94a3b8" font-size="9" text-anchor="middle">IN (24V)</text>
+
+    <rect x="205" y="112" width="60" height="26" rx="3" fill="#0f172a" stroke="#475569"/>
+    <circle cx="218" cy="125" r="6" fill="#ec4899"/>
+    <circle cx="248" cy="125" r="6" fill="#0284c7"/>
+    <text x="235" y="148" fill="#f472b6" font-size="9" font-weight="bold" text-anchor="middle">OUT (5.00V)</text>
+  </g>
+
+  <!-- 5. ESP32-S3 WROOM-1 N16R8 -->
+  <g id="mod-esp32" transform="translate(60, 480)" filter="url(#shadowBox)">
+    <rect width="480" height="580" rx="12" fill="url(#gradEsp)" stroke="#38bdf8" stroke-width="2.5"/>
+    
+    <rect x="20" y="15" width="440" height="48" rx="6" fill="#090d16" stroke="#334155"/>
+    <text x="240" y="38" fill="#38bdf8" font-size="17" font-weight="bold" text-anchor="middle">ESP32-S3 DEVKITC-1 N16R8 (PLACA COM BORNES)</text>
+    <text x="240" y="54" fill="#94a3b8" font-size="11" text-anchor="middle">16MB Flash • 8MB PSRAM Octal • Barramento SPI e I2C Nativo</text>
+
+    <rect x="140" y="85" width="130" height="150" rx="6" fill="#334155" stroke="#64748b" stroke-width="2"/>
+    <rect x="155" y="100" width="100" height="100" rx="4" fill="#1e293b"/>
+    <text x="205" y="150" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">ESP32-S3</text>
+    <text x="205" y="168" fill="#38bdf8" font-size="10" text-anchor="middle">WROOM-1</text>
+    <text x="205" y="182" fill="#94a3b8" font-size="9" text-anchor="middle">N16R8</text>
+
+    <!-- Tarja PSRAM Esquerda -->
+    <g transform="translate(25, 85)">
+      <rect width="70" height="460" rx="6" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5"/>
+      <text x="35" y="30" fill="#a5b4fc" font-size="11" font-weight="bold" text-anchor="middle">BORNE</text>
+      <text x="35" y="45" fill="#a5b4fc" font-size="11" font-weight="bold" text-anchor="middle">ESQUERDO</text>
+      
+      <rect x="8" y="130" width="54" height="90" rx="4" fill="#7f1d1d" stroke="#ef4444"/>
+      <text x="35" y="150" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">35</text>
+      <text x="35" y="172" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">36</text>
+      <text x="35" y="194" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">37</text>
+      <text x="35" y="210" fill="#fca5a5" font-size="7" font-weight="bold" text-anchor="middle">PROIBIDO</text>
+
+      <text x="35" y="240" fill="#fca5a5" font-size="8" text-anchor="middle">PSRAM</text>
+      <text x="35" y="252" fill="#fca5a5" font-size="8" text-anchor="middle">Interna</text>
+      <text x="35" y="264" fill="#fca5a5" font-size="8" text-anchor="middle">N16R8</text>
+    </g>
+
+    <!-- Régua Direita -->
+    <g transform="translate(370, 85)">
+      <rect width="85" height="465" rx="6" fill="#14532d" stroke="#22c55e" stroke-width="2"/>
+      <text x="42" y="20" fill="#bbf7d0" font-size="10" font-weight="bold" text-anchor="middle">LADO DIREITO</text>
+
+      <circle cx="25" cy="45" r="10" fill="#0f172a" stroke="#ec4899" stroke-width="2"/>
+      <text x="25" y="49" fill="#ec4899" font-size="10" font-weight="bold" text-anchor="middle">5V</text>
+      <text x="50" y="49" fill="#fff" font-size="10" font-weight="bold">5V IN</text>
+
+      <circle cx="25" cy="75" r="10" fill="#0f172a" stroke="#0284c7" stroke-width="2"/>
+      <text x="25" y="79" fill="#0284c7" font-size="11" font-weight="bold" text-anchor="middle">G</text>
+      <text x="50" y="79" fill="#fff" font-size="10" font-weight="bold">GND</text>
+
+      <circle cx="25" cy="110" r="10" fill="#0f172a" stroke="#eab308" stroke-width="2"/>
+      <text x="25" y="114" fill="#eab308" font-size="11" font-weight="bold" text-anchor="middle">4</text>
+      <text x="50" y="114" fill="#eab308" font-size="9" font-weight="bold">I2C SDA</text>
+
+      <circle cx="25" cy="140" r="10" fill="#0f172a" stroke="#eab308" stroke-width="2"/>
+      <text x="25" y="144" fill="#eab308" font-size="11" font-weight="bold" text-anchor="middle">5</text>
+      <text x="50" y="144" fill="#eab308" font-size="9" font-weight="bold">I2C SCL</text>
+
+      <circle cx="25" cy="175" r="10" fill="#0f172a" stroke="#22c55e" stroke-width="2"/>
+      <text x="25" y="179" fill="#4ade80" font-size="11" font-weight="bold" text-anchor="middle">6</text>
+      <text x="50" y="179" fill="#4ade80" font-size="9" font-weight="bold">PWM PTC</text>
+
+      <circle cx="25" cy="205" r="10" fill="#0f172a" stroke="#22c55e" stroke-width="2"/>
+      <text x="25" y="209" fill="#4ade80" font-size="11" font-weight="bold" text-anchor="middle">7</text>
+      <text x="50" y="209" fill="#4ade80" font-size="9" font-weight="bold">PURGA</text>
+
+      <circle cx="25" cy="240" r="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+      <text x="25" y="244" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">8</text>
+      <text x="50" y="244" fill="#38bdf8" font-size="9">T_CS</text>
+
+      <circle cx="25" cy="270" r="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+      <text x="25" y="274" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">9</text>
+      <text x="50" y="274" fill="#38bdf8" font-size="9">TFT DC</text>
+
+      <circle cx="25" cy="300" r="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+      <text x="25" y="304" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">10</text>
+      <text x="50" y="304" fill="#38bdf8" font-size="9">TFT CS</text>
+
+      <circle cx="25" cy="335" r="10" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+      <text x="25" y="339" fill="#c084fc" font-size="10" font-weight="bold" text-anchor="middle">11</text>
+      <text x="50" y="339" fill="#c084fc" font-size="9" font-weight="bold">MOSI</text>
+
+      <circle cx="25" cy="365" r="10" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+      <text x="25" y="369" fill="#c084fc" font-size="10" font-weight="bold" text-anchor="middle">12</text>
+      <text x="50" y="369" fill="#c084fc" font-size="9" font-weight="bold">SCK</text>
+
+      <circle cx="25" cy="395" r="10" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+      <text x="25" y="399" fill="#c084fc" font-size="10" font-weight="bold" text-anchor="middle">13</text>
+      <text x="50" y="399" fill="#c084fc" font-size="9" font-weight="bold">MISO</text>
+
+      <circle cx="25" cy="425" r="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+      <text x="25" y="429" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">14</text>
+      <text x="50" y="429" fill="#38bdf8" font-size="9">RESET</text>
+
+      <circle cx="25" cy="452" r="9" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+      <text x="25" y="456" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="middle">3.3</text>
+      <text x="50" y="456" fill="#c084fc" font-size="9" font-weight="bold">3.3V OUT</text>
+    </g>
+  </g>
+
+  <!-- 6. MÓDULOS MOSFET HW-532 -->
+  <g id="mod-mosfet1" transform="translate(1000, 110)" filter="url(#shadowBox)">
+    <rect width="280" height="170" rx="8" fill="url(#gradMosfet)" stroke="#ef4444" stroke-width="2"/>
+    <text x="140" y="24" fill="#f87171" font-size="12" font-weight="bold" text-anchor="middle">MOSFET 1 • AQUECEDOR PTC</text>
+    <text x="140" y="38" fill="#71717a" font-size="9" text-anchor="middle">HW-532 (LR7843 + Optoacoplador)</text>
+
+    <g transform="translate(15, 55)">
+      <rect width="45" height="75" rx="4" fill="#15803d" stroke="#22c55e"/>
+      <circle cx="22" cy="22" r="7" fill="#0f172a" stroke="#fff"/>
+      <text x="22" y="25" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">PWM</text>
+      <circle cx="22" cy="52" r="7" fill="#0f172a" stroke="#fff"/>
+      <text x="22" y="55" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">GND</text>
+      <text x="22" y="90" fill="#4ade80" font-size="8" text-anchor="middle">3.3V</text>
+    </g>
+
+    <g transform="translate(210, 45)">
+      <rect width="55" height="105" rx="4" fill="#1d4ed8" stroke="#3b82f6"/>
+      <circle cx="27" cy="20" r="8" fill="#0f172a" stroke="#f87171"/>
+      <text x="27" y="23" fill="#f87171" font-size="8" font-weight="bold" text-anchor="middle">V+</text>
+      <circle cx="27" cy="52" r="8" fill="#0f172a" stroke="#38bdf8"/>
+      <text x="27" y="55" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="middle">V-</text>
+      <circle cx="27" cy="84" r="8" fill="#0f172a" stroke="#fbbf24"/>
+      <text x="27" y="87" fill="#fbbf24" font-size="8" font-weight="bold" text-anchor="middle">OUT</text>
+      <text x="27" y="120" fill="#93c5fd" font-size="8" text-anchor="middle">24V</text>
+    </g>
+  </g>
+
+  <g id="mod-mosfet2" transform="translate(1000, 310)" filter="url(#shadowBox)">
+    <rect width="280" height="170" rx="8" fill="url(#gradMosfet)" stroke="#38bdf8" stroke-width="2"/>
+    <text x="140" y="24" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle">MOSFET 2 • VENTOINHAS DE PURGA</text>
+    <text x="140" y="38" fill="#71717a" font-size="9" text-anchor="middle">HW-532 (LR7843 + Optoacoplador)</text>
+
+    <g transform="translate(15, 55)">
+      <rect width="45" height="75" rx="4" fill="#15803d" stroke="#22c55e"/>
+      <circle cx="22" cy="22" r="7" fill="#0f172a" stroke="#fff"/>
+      <text x="22" y="25" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">PWM</text>
+      <circle cx="22" cy="52" r="7" fill="#0f172a" stroke="#fff"/>
+      <text x="22" y="55" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">GND</text>
+      <text x="22" y="90" fill="#4ade80" font-size="8" text-anchor="middle">3.3V</text>
+    </g>
+
+    <g transform="translate(210, 45)">
+      <rect width="55" height="105" rx="4" fill="#1d4ed8" stroke="#3b82f6"/>
+      <circle cx="27" cy="20" r="8" fill="#0f172a" stroke="#f87171"/>
+      <text x="27" y="23" fill="#f87171" font-size="8" font-weight="bold" text-anchor="middle">V+</text>
+      <circle cx="27" cy="52" r="8" fill="#0f172a" stroke="#38bdf8"/>
+      <text x="27" y="55" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="middle">V-</text>
+      <circle cx="27" cy="84" r="8" fill="#0f172a" stroke="#fbbf24"/>
+      <text x="27" y="87" fill="#fbbf24" font-size="8" font-weight="bold" text-anchor="middle">OUT</text>
+      <text x="27" y="120" fill="#93c5fd" font-size="8" text-anchor="middle">24V</text>
+    </g>
+  </g>
+
+  <!-- 7. AQUECEDOR PTC 150W E COOLERS -->
+  <g id="mod-ptc" transform="translate(1360, 95)" filter="url(#shadowBox)">
+    <rect width="300" height="185" rx="10" fill="url(#gradPtcheater)" stroke="#e11d48" stroke-width="2.5"/>
+    <text x="150" y="26" fill="#fb7185" font-size="14" font-weight="bold" text-anchor="middle">AQUECEDOR PTC 150W</text>
+    <text x="150" y="42" fill="#94a3b8" font-size="10" text-anchor="middle">Carcaça Isolada com Ventoinha Própria</text>
+
+    <circle cx="75" cy="110" r="45" fill="#090d16" stroke="#475569" stroke-width="2"/>
+    <circle cx="75" cy="110" r="14" fill="#334155"/>
+    
+    <rect x="140" y="55" width="145" height="50" rx="4" fill="#1e293b" stroke="#ef4444"/>
+    <text x="212" y="72" fill="#fca5a5" font-size="10" font-weight="bold" text-anchor="middle">2 FIOS GROSSOS</text>
+    <text x="212" y="86" fill="#cbd5e1" font-size="9" text-anchor="middle">Resistência PTC (150W)</text>
+    <text x="212" y="98" fill="#facc15" font-size="8" text-anchor="middle">(+) no 24V / (-) no MOSFET OUT</text>
+
+    <rect x="140" y="115" width="145" height="50" rx="4" fill="#1e293b" stroke="#38bdf8"/>
+    <text x="212" y="132" fill="#7dd3fc" font-size="10" font-weight="bold" text-anchor="middle">2 FIOS FINOS</text>
+    <text x="212" y="146" fill="#cbd5e1" font-size="9" text-anchor="middle">Ventoinha do Aquecedor</text>
+    <text x="212" y="158" fill="#4ade80" font-size="8" font-weight="bold" text-anchor="middle">DIRETO NO 24V (Giro Contínuo)</text>
+  </g>
+
+  <!-- Termofusível 75°C -->
+  <g id="mod-tf" transform="translate(1300, 160)" filter="url(#shadowBox)">
+    <rect width="45" height="22" rx="4" fill="#cbd5e1" stroke="#f1f5f9"/>
+    <text x="22" y="14" fill="#090d16" font-size="8" font-weight="bold" text-anchor="middle">75°C TF</text>
+  </g>
+
+  <!-- Ventoinhas de Purga -->
+  <g id="mod-fans" transform="translate(1360, 310)" filter="url(#shadowBox)">
+    <rect width="300" height="170" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="150" y="24" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">2x VENTOINHAS DE PURGA 24V (6015)</text>
+    <text x="150" y="38" fill="#94a3b8" font-size="9" text-anchor="middle">Ligadas em Paralelo (+ no 24V / - no MOSFET 2 OUT)</text>
+
+    <g transform="translate(25, 50)">
+      <rect width="110" height="100" rx="6" fill="#0f172a" stroke="#475569"/>
+      <circle cx="55" cy="45" r="30" fill="#1e293b" stroke="#64748b"/>
+      <circle cx="55" cy="45" r="10" fill="#38bdf8"/>
+      <text x="55" y="88" fill="#e2e8f0" font-size="9" font-weight="bold" text-anchor="middle">Admissão (Insufla)</text>
+    </g>
+
+    <g transform="translate(165, 50)">
+      <rect width="110" height="100" rx="6" fill="#0f172a" stroke="#475569"/>
+      <circle cx="55" cy="45" r="30" fill="#1e293b" stroke="#64748b"/>
+      <circle cx="55" cy="45" r="10" fill="#38bdf8"/>
+      <text x="55" y="88" fill="#e2e8f0" font-size="9" font-weight="bold" text-anchor="middle">Exaustão (Retira)</text>
+    </g>
+  </g>
+
+  <!-- 8. DISPLAY TFT 2.4" -->
+  <g id="mod-display" transform="translate(640, 560)" filter="url(#shadowBox)">
+    <rect width="450" height="500" rx="12" fill="url(#gradDisplay)" stroke="#fca5a5" stroke-width="2"/>
+    <rect x="20" y="15" width="410" height="38" rx="6" fill="#450a0a"/>
+    <text x="225" y="38" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">DISPLAY TFT 2.4" SPI COM TOUCH RESISTIVO</text>
+
+    <rect x="25" y="65" width="220" height="320" rx="6" fill="#000" stroke="#334155" stroke-width="2"/>
+    <text x="135" y="95" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle">DRY FILA BOX 60L</text>
+    
+    <circle cx="135" cy="150" r="35" fill="none" stroke="#334155" stroke-width="8"/>
+    <circle cx="135" cy="150" r="35" fill="none" stroke="#ef4444" stroke-width="8" stroke-dasharray="140 220"/>
+    <text x="135" y="155" fill="#fff" font-size="13" font-weight="bold" text-anchor="middle">50.0°C</text>
+
+    <circle cx="85" cy="240" r="25" fill="none" stroke="#334155" stroke-width="6"/>
+    <circle cx="85" cy="240" r="25" fill="none" stroke="#38bdf8" stroke-width="6" stroke-dasharray="90 160"/>
+    <text x="85" y="244" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">18%</text>
+
+    <circle cx="185" cy="240" r="25" fill="none" stroke="#334155" stroke-width="6"/>
+    <circle cx="185" cy="240" r="25" fill="none" stroke="#eab308" stroke-width="6" stroke-dasharray="80 160"/>
+    <text x="185" y="244" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">14g/m³</text>
+
+    <rect x="40" y="300" width="80" height="25" rx="4" fill="#15803d"/>
+    <text x="80" y="316" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">PLA [50°C]</text>
+    <rect x="150" y="300" width="80" height="25" rx="4" fill="#1d4ed8"/>
+    <text x="190" y="316" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">PETG [60°C]</text>
+
+    <rect x="25" y="400" width="400" height="85" rx="6" fill="#450a0a" stroke="#ef4444"/>
+    <text x="225" y="420" fill="#fca5a5" font-size="11" font-weight="bold" text-anchor="middle">⚠️ ALERTA CRÍTICO DE QUEIMA DO BACKLIGHT:</text>
+    <text x="225" y="438" fill="#fff" font-size="10" text-anchor="middle">O pino LED deve ser ligado EXCLUSIVAMENTE ao 3.3V (Borne 3.3).</text>
+    <text x="225" y="454" fill="#fca5a5" font-size="10" text-anchor="middle">NUNCA LIGUE EM 5V (queima irreversível dos LEDs internos).</text>
+    <text x="225" y="470" fill="#cbd5e1" font-size="9" text-anchor="middle">Pino T_IRQ: Deixar sem conexão (leitura é por polling no código).</text>
+
+    <g transform="translate(265, 65)">
+      <rect width="165" height="320" rx="6" fill="#1e293b" stroke="#cbd5e1"/>
+      <text x="82" y="18" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">PINOS DA TELA</text>
+
+      <text x="12" y="38" fill="#fff" font-size="9">1. VCC</text> <text x="155" y="38" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">3.3V ou 5V</text>
+      <text x="12" y="58" fill="#fff" font-size="9">2. GND</text> <text x="155" y="58" fill="#0284c7" font-size="8" font-weight="bold" text-anchor="end">Borne G</text>
+      <text x="12" y="78" fill="#fff" font-size="9">3. CS</text> <text x="155" y="78" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="end">Borne 10</text>
+      <text x="12" y="98" fill="#fff" font-size="9">4. RESET</text> <text x="155" y="98" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="end">Borne 14</text>
+      <text x="12" y="118" fill="#fff" font-size="9">5. DC</text> <text x="155" y="118" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="end">Borne 9</text>
+      <text x="12" y="138" fill="#fff" font-size="9">6. SDI (MOSI)</text> <text x="155" y="138" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 11 ⚑</text>
+      <text x="12" y="158" fill="#fff" font-size="9">7. SCK</text> <text x="155" y="158" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 12 ⚑</text>
+      <text x="12" y="178" fill="#fca5a5" font-size="9" font-weight="bold">8. LED</text> <text x="155" y="178" fill="#ef4444" font-size="8" font-weight="bold" text-anchor="end">Borne 3.3V ⚠️</text>
+      <text x="12" y="198" fill="#fff" font-size="9">9. SDO (MISO)</text> <text x="155" y="198" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 13 ⚑</text>
+      <text x="12" y="218" fill="#fff" font-size="9">10. T_CLK</text> <text x="155" y="218" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 12 ⚑</text>
+      <text x="12" y="238" fill="#fff" font-size="9">11. T_CS</text> <text x="155" y="238" fill="#38bdf8" font-size="8" font-weight="bold" text-anchor="end">Borne 8</text>
+      <text x="12" y="258" fill="#fff" font-size="9">12. T_DIN</text> <text x="155" y="258" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 11 ⚑</text>
+      <text x="12" y="278" fill="#fff" font-size="9">13. T_DO</text> <text x="155" y="278" fill="#c084fc" font-size="8" font-weight="bold" text-anchor="end">Borne 13 ⚑</text>
+      <text x="12" y="298" fill="#94a3b8" font-size="9">14. T_IRQ</text> <text x="155" y="298" fill="#94a3b8" font-size="8" text-anchor="end">DESCONECTADO</text>
+    </g>
+  </g>
+
+  <!-- 9. SENSORES SHT31-D -->
+  <g id="mod-sensors" transform="translate(1160, 560)" filter="url(#shadowBox)">
+    <g transform="translate(0, 0)">
+      <rect width="240" height="220" rx="8" fill="#1e293b" stroke="#eab308" stroke-width="2"/>
+      <text x="120" y="25" fill="#facc15" font-size="12" font-weight="bold" text-anchor="middle">SHT31-D #1 (INTERNO)</text>
+      <text x="120" y="42" fill="#94a3b8" font-size="10" text-anchor="middle">Fundo da Caixa • Endereço 0x44</text>
+      
+      <rect x="20" y="55" width="200" height="150" rx="4" fill="#0f172a" stroke="#334155"/>
+      <text x="30" y="80" fill="#c084fc" font-size="10">VIN: <strong>3.3V</strong> (Borne 3.3)</text>
+      <text x="30" y="105" fill="#0284c7" font-size="10">GND: <strong>GND</strong> (Borne G)</text>
+      <text x="30" y="130" fill="#eab308" font-size="10">SCL: <strong>Borne 5</strong> (GPIO 5)</text>
+      <text x="30" y="155" fill="#eab308" font-size="10">SDA: <strong>Borne 4</strong> (GPIO 4)</text>
+      <text x="30" y="180" fill="#38bdf8" font-size="10" font-weight="bold">ADDR: Ligado ao GND (0x44)</text>
+    </g>
+
+    <g transform="translate(260, 0)">
+      <rect width="240" height="220" rx="8" fill="#1e293b" stroke="#eab308" stroke-width="2"/>
+      <text x="120" y="25" fill="#facc15" font-size="12" font-weight="bold" text-anchor="middle">SHT31-D #2 (EXTERNO)</text>
+      <text x="120" y="42" fill="#94a3b8" font-size="10" text-anchor="middle">Saída de Purga • Endereço 0x45</text>
+      
+      <rect x="20" y="55" width="200" height="150" rx="4" fill="#0f172a" stroke="#334155"/>
+      <text x="30" y="80" fill="#c084fc" font-size="10">VIN: <strong>3.3V</strong> (Borne 3.3)</text>
+      <text x="30" y="105" fill="#0284c7" font-size="10">GND: <strong>GND</strong> (Borne G)</text>
+      <text x="30" y="130" fill="#eab308" font-size="10">SCL: <strong>Borne 5</strong> (GPIO 5)</text>
+      <text x="30" y="155" fill="#eab308" font-size="10">SDA: <strong>Borne 4</strong> (GPIO 4)</text>
+      <text x="30" y="180" fill="#ec4899" font-size="10" font-weight="bold">ADDR: Ligado ao 3.3V (0x45)</text>
+    </g>
+  </g>
+
+  <!-- FIAÇÃO GERAL -->
+  <!-- 1. AC -->
+  <path d="M 85 210 L 85 240 L 340 240 L 340 195" fill="none" stroke="#b45309" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 125 210 L 125 255 L 385 255 L 385 195" fill="none" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 165 210 L 165 270 L 430 270 L 430 195" fill="none" stroke="#22c55e" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- 2. +24V PRINCIPAL -->
+  <path d="M 550 245 L 640 245" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 750 230 L 780 230 L 780 180 L 800 180" fill="none" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 850 215 L 850 320 L 668 320 L 668 472" fill="none" stroke="#dc2626" stroke-width="3"/>
+  <path d="M 920 180 L 1237 180 L 1237 155" fill="none" stroke="#dc2626" stroke-width="4"/>
+  <path d="M 900 180 L 960 180 L 960 375 L 1237 375 L 1237 355" fill="none" stroke="#dc2626" stroke-width="4"/>
+  <path d="M 875 180 L 875 80 L 1300 80 L 1300 170" fill="none" stroke="#dc2626" stroke-width="5"/>
+  <path d="M 1345 170 L 1572 170 L 1572 150" fill="none" stroke="#dc2626" stroke-width="5"/>
+  <path d="M 1300 80 L 1640 80 L 1640 210" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+  <path d="M 960 375 L 960 495 L 1415 495 L 1415 460" fill="none" stroke="#dc2626" stroke-width="3"/>
+  <path d="M 1415 495 L 1555 495 L 1555 460" fill="none" stroke="#dc2626" stroke-width="3"/>
+
+  <!-- 3. GND UNIFICADO -->
+  <path d="M 495 245 L 495 290 L 800 290" fill="none" stroke="#0284c7" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 825 295 L 825 340 L 698 340 L 698 472" fill="none" stroke="#0284c7" stroke-width="3"/>
+  <path d="M 875 290 L 980 290 L 980 215 L 1237 215 L 1237 200" fill="none" stroke="#0284c7" stroke-width="4"/>
+  <path d="M 875 290 L 980 290 L 980 415 L 1237 415 L 1237 400" fill="none" stroke="#0284c7" stroke-width="4"/>
+  <path d="M 980 290 L 980 60 L 1670 60 L 1670 210" fill="none" stroke="#0284c7" stroke-width="2.5"/>
+  <path d="M 800 270 L 610 270 L 610 560 L 412 560" fill="none" stroke="#0284c7" stroke-width="4"/>
+
+  <!-- 4. STEP-DOWN 5.00V -->
+  <path d="M 858 485 L 858 530 L 412 530" fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 888 485 L 888 545 L 420 545 L 420 560" fill="none" stroke="#0284c7" stroke-width="3" stroke-dasharray="6 3"/>
+
+  <!-- 5. LINHA 3.3V -->
+  <path d="M 412 937 L 540 937" fill="none" stroke="#a855f7" stroke-width="3.5"/>
+  <path d="M 540 937 L 540 738 L 652 738" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="8 4"/>
+  <path d="M 540 738 L 540 598 L 652 598" fill="none" stroke="#a855f7" stroke-width="3"/>
+  <path d="M 540 937 L 540 1080 L 1180 1080 L 1180 640" fill="none" stroke="#a855f7" stroke-width="3"/>
+  <path d="M 1180 1080 L 1440 1080 L 1440 640" fill="none" stroke="#a855f7" stroke-width="3"/>
+
+  <!-- 6. PWM GPIO 6 E 7 -->
+  <path d="M 412 660 L 580 660 L 580 85 L 1037 85 L 1037 165" fill="none" stroke="#22c55e" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M 412 560 L 595 560 L 595 105 L 1037 105 L 1037 195" fill="none" stroke="#64748b" stroke-width="2.5"/>
+  <path d="M 412 690 L 565 690 L 565 340 L 1037 340 L 1037 365" fill="none" stroke="#4ade80" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M 595 560 L 595 380 L 1037 380 L 1037 395" fill="none" stroke="#64748b" stroke-width="2.5"/>
+
+  <!-- 7. CHAVEAMENTO MOSFET OUT -->
+  <path d="M 1264 242 L 1330 242 L 1330 215 L 1480 215 L 1480 150" fill="none" stroke="#f97316" stroke-width="5" stroke-linecap="round"/>
+  <path d="M 1264 442 L 1330 442 L 1330 475 L 1450 475 L 1450 460" fill="none" stroke="#f97316" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 1450 475 L 1590 475 L 1590 460" fill="none" stroke="#f97316" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- 8. I2C -->
+  <path d="M 412 595 L 530 595 L 530 1100 L 1220 1100 L 1220 715" fill="none" stroke="#eab308" stroke-width="3"/>
+  <path d="M 1220 1100 L 1480 1100 L 1480 715" fill="none" stroke="#eab308" stroke-width="3"/>
+  <path d="M 412 625 L 515 625 L 515 1115 L 1240 1115 L 1240 690" fill="none" stroke="#f59e0b" stroke-width="3"/>
+  <path d="M 1240 1115 L 1500 1115 L 1500 690" fill="none" stroke="#f59e0b" stroke-width="3"/>
+
+  <!-- 9. SPI -->
+  <path d="M 412 725 L 620 725 L 620 798 L 652 798" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+  <path d="M 412 755 L 605 755 L 605 678 L 652 678" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+  <path d="M 412 785 L 590 785 L 590 638 L 652 638" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+  <path d="M 412 820 L 575 820 L 575 698 L 652 698" fill="none" stroke="#c084fc" stroke-width="3"/>
+  <path d="M 575 698 L 575 818 L 652 818" fill="none" stroke="#c084fc" stroke-width="3"/>
+  <path d="M 412 850 L 560 850 L 560 718 L 652 718" fill="none" stroke="#c084fc" stroke-width="3"/>
+  <path d="M 560 718 L 560 778 L 652 778" fill="none" stroke="#c084fc" stroke-width="3"/>
+  <path d="M 412 880 L 545 880 L 545 758 L 652 758" fill="none" stroke="#c084fc" stroke-width="3"/>
+  <path d="M 545 758 L 545 838 L 652 838" fill="none" stroke="#c084fc" stroke-width="3"/>
+  <path d="M 412 910 L 530 910 L 530 658 L 652 658" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+</svg>

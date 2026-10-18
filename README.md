@@ -250,6 +250,13 @@ Para não precisar comprar vários rolos diferentes, adquira apenas estas **4 ca
 
 ### Diagrama Esquemático em Blocos
 
+> [!TIP]
+> **Esquema Elétrico Geral e Interativo de Ponta a Ponta**:
+> Foi desenvolvido um guia visual interativo completo em HTML5 e SVG, contendo o traçado físico de cada fio desde a tomada AC até o último cooler, com filtros dinâmicos por barramento, checklist interativo de bancada (que salva seu progresso no navegador) e tabelas consolidadas:
+> * 🌐 **[Abrir Esquema Geral Interativo do Sistema (HTML)](file:///d:/Users/Guilherme/Projetos/drybox/esquema_completo_sistema.html)**
+> * 🖼️ **[Abrir Diagrama Vetorial do Sistema Completo (SVG)](file:///d:/Users/Guilherme/Projetos/drybox/esquema_completo_sistema.svg)**
+> * ⚡ **[Abrir Esquema Específico dos MOSFETs (HTML)](file:///d:/Users/Guilherme/Projetos/drybox/esquema_ligacao_mosfets.html)** / **[(SVG)](file:///d:/Users/Guilherme/Projetos/drybox/esquema_ligacao_mosfets.svg)**
+
 ```text
 ======================= LINHA DE POTÊNCIA (24V DC) =======================
 [ FONTE 24V 10A ]
@@ -311,12 +318,6 @@ ESP32-S3 [Borne 8]   ─────> TFT [T_CS] (Seleção Touch)
 ---
 
 ### Ligação dos Módulos MOSFET LR7843 (Placa HW-532 Optoisolada)
-
-> [!TIP]
-> **Esquema Gráfico em Alta Resolução**:
-> Foi gerado um diagrama interativo em vetor e 100% em português. Você pode abri-lo no seu navegador a qualquer momento:
-> * 🔗 [Abrir Esquema Interativo no Navegador (HTML)](file:///d:/Users/Guilherme/Projetos/drybox/esquema_ligacao_mosfets.html)
-> * 🖼️ [Abrir Vetor SVG de Alta Resolução](file:///d:/Users/Guilherme/Projetos/drybox/esquema_ligacao_mosfets.svg)
 
 Você utilizará **2 módulos iguais** a este: um para o Aquecedor PTC e outro para as Ventoinhas de Purga. O optoacoplador **PC817** garante isolamento galvânico total, impedindo que ruídos ou picos dos 24V atinjam o ESP32-S3.
 
