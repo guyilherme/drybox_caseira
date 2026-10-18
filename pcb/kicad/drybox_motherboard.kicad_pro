@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "filename": "drybox_motherboard.kicad_pro",
+    "version": 1
+  },
+  "project": {
+    "files": []
+  },
+  "pcbnew": {
+    "last_paths": {
+      "gencad": "",
+      "idf": "",
+      "netlist": "",
+      "plot": "",
+      "pos": "",
+      "vrml": ""
+    }
+  },
+  "schematic": {
+    "drawing": {
+      "dashed_lines_dash_length_ratio": 12.0,
+      "dashed_lines_gap_length_ratio": 3.0,
+      "default_line_thickness": 0.1524,
+      "default_text_size": 1.27,
+      "pin_symbol_size": 0.0,
+      "text_offset_ratio": 0.08
+    }
+  }
+}

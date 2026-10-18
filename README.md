@@ -422,6 +422,19 @@ flowchart LR
 
 ---
 
+### Placa Mãe / Carrier Shield PCB (Pronta para PCBWay / JLCPCB)
+
+Para eliminar 100% da fiação solta e obter acabamento profissional de fábrica, foi desenvolvida a **Placa Mãe Carrier Shield** padronizada em **100x100mm (2 camadas)**. Basta soldar bornes de parafuso e barras de pinos para plugar o ESP32-S3, o LM2596 e os módulos MOSFET.
+
+* **[Guia Completo de Fabricação e Pedido PCBWay](PLACA_PCB_GUIA_FABRICACAO.md)**
+* **[Visualizador Interativo da PCB e Download do ZIP](placa_circuito_impresso.html)**
+* **[Arquivo ZIP Gerber Pronto para Envio à Fábrica](pcb/drybox_motherboard_gerber.zip)**
+* **[Projeto Completo no KiCad 7/8](pcb/kicad/)**
+* **[Diagrama Elétrico Completo de Ponta a Ponta (HTML)](esquema_completo_sistema.html)**
+* **[Esquema Visual dos Módulos MOSFET (HTML)](esquema_ligacao_mosfets.html)**
+
+---
+
 ## 4. Construção Mecânica Passo a Passo
 
 ### Etapa 1: Furação e Corte no Isopor

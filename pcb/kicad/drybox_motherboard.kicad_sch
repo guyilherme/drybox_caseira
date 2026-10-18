@@ -1,0 +1,19 @@
+(kicad_sch (version 20230121) (generator eeschema)
+
+  (uuid "d0a520f8-c2fb-4ce9-897c-9b889b70bfa8")
+
+  (paper "A4")
+
+  (title_block
+    (title "Drybox 60L Pro - Motherboard Carrier Shield")
+    (date "2026-10-18")
+    (rev "v1.0")
+    (company "Drybox DIY Pro")
+    (comment 1 "Placa de circuito impresso unificada para ESP32-S3, LM2596, MOSFETs e Cargas 24V")
+  )
+
+  (wire (pts (xy 30 40) (xy 50 40))
+    (stroke (width 0) (type default))
+    (uuid "1a2b3c4d-0001-4000-8000-000000000001")
+  )
+)
