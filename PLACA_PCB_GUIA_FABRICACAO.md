@@ -12,10 +12,10 @@ Todos os arquivos estão organizados no repositório:
 
 | Arquivo / Pasta | Descrição |
 | :--- | :--- |
-| **[`pcb/drybox_motherboard_gerber.zip`](file:///d:/Users/Guilherme/Projetos/drybox/pcb/drybox_motherboard_gerber.zip)** | **Arquivo ZIP pronto para envio direto à fábrica** (contém todos os arquivos Gerber RS-274X e furação Excellon `.drl`). |
-| **[`placa_circuito_impresso.html`](file:///d:/Users/Guilherme/Projetos/drybox/placa_circuito_impresso.html)** | **Visualizador interativo em HTML/SVG** com inspeção de camadas (Top/Bottom Copper, Silkscreen, Pads), botão de download do ZIP com 1 clique e tabela de componentes. |
-| **[`pcb/kicad/`](file:///d:/Users/Guilherme/Projetos/drybox/pcb/kicad)** | Projeto completo no **KiCad 7/8** (`drybox_motherboard.kicad_pro`, `drybox_motherboard.kicad_pcb` e `drybox_motherboard.kicad_sch`). |
-| **[`pcb/gerber/`](file:///d:/Users/Guilherme/Projetos/drybox/pcb/gerber)** | Arquivos individuais Gerber descompactados (`.gtl`, `.gbl`, `.gts`, `.gbs`, `.gto`, `.gbo`, `.gbr`, `.drl`). |
+| **[`pcb/drybox_motherboard_gerber.zip`](pcb/drybox_motherboard_gerber.zip)** | **Arquivo ZIP pronto para envio direto à fábrica** (contém todos os arquivos Gerber RS-274X e furação Excellon `.drl`). |
+| **[`placa_circuito_impresso.html`](placa_circuito_impresso.html)** | **Visualizador interativo em HTML/SVG** com inspeção de camadas (Top/Bottom Copper, Silkscreen, Pads), botão de download do ZIP com 1 clique e tabela de componentes. |
+| **[`pcb/kicad/`](pcb/kicad/)** | Projeto completo no **KiCad 7/8** (`drybox_motherboard.kicad_pro`, `drybox_motherboard.kicad_pcb` e `drybox_motherboard.kicad_sch`). |
+| **[`pcb/gerber/`](pcb/gerber/)** | Arquivos individuais Gerber descompactados (`.gtl`, `.gbl`, `.gts`, `.gbs`, `.gto`, `.gbo`, `.gbr`, `.drl`). |
 
 ---
 

@@ -253,9 +253,9 @@ Para não precisar comprar vários rolos diferentes, adquira apenas estas **4 ca
 > [!TIP]
 > **Esquema Elétrico Geral e Interativo de Ponta a Ponta**:
 > Foi desenvolvido um guia visual interativo completo em HTML5 e SVG, contendo o traçado físico de cada fio desde a tomada AC até o último cooler, com filtros dinâmicos por barramento, checklist interativo de bancada (que salva seu progresso no navegador) e tabelas consolidadas:
-> * 🌐 **[Abrir Esquema Geral Interativo do Sistema (HTML)](file:///d:/Users/Guilherme/Projetos/drybox/esquema_completo_sistema.html)**
-> * 🖼️ **[Abrir Diagrama Vetorial do Sistema Completo (SVG)](file:///d:/Users/Guilherme/Projetos/drybox/esquema_completo_sistema.svg)**
-> * ⚡ **[Abrir Esquema Específico dos MOSFETs (HTML)](file:///d:/Users/Guilherme/Projetos/drybox/esquema_ligacao_mosfets.html)** / **[(SVG)](file:///d:/Users/Guilherme/Projetos/drybox/esquema_ligacao_mosfets.svg)**
+> * 🌐 **[Abrir Esquema Geral Interativo do Sistema (HTML)](esquema_completo_sistema.html)**
+> * 🖼️ **[Abrir Diagrama Vetorial do Sistema Completo (SVG)](esquema_completo_sistema.svg)**
+> * ⚡ **[Abrir Esquema Específico dos MOSFETs (HTML)](esquema_ligacao_mosfets.html)** / **[(SVG)](esquema_ligacao_mosfets.svg)**
 
 ```text
 ======================= LINHA DE POTÊNCIA (24V DC) =======================
@@ -488,7 +488,7 @@ Aloje o ESP32, o regulador Step-Down, o display TFT Touch e os módulos MOSFET e
 
 ## 5. Guia de Firmware e Upload
 
-O código-fonte completo está em [`DryboxController/DryboxController.ino`](file:///D:/Users/Guilherme/Projetos/drybox/DryboxController/DryboxController.ino).
+O código-fonte completo está em [`DryboxController/DryboxController.ino`](DryboxController/DryboxController.ino).
 
 ### Opção A: Upload via Arduino IDE
 1. Baixe e instale a **Arduino IDE 2.x**.
@@ -504,7 +504,7 @@ O código-fonte completo está em [`DryboxController/DryboxController.ino`](file
    - `Adafruit SHT31 Library`
    - `PubSubClient` (por Nick O'Leary)
    - `ArduinoJson` (por Benoit Blanchon)
-5. Abra o arquivo [`DryboxController/DryboxController.ino`](file:///D:/Users/Guilherme/Projetos/drybox/DryboxController/DryboxController.ino).
+5. Abra o arquivo [`DryboxController/DryboxController.ino`](DryboxController/DryboxController.ino).
 6. Altere o nome e a senha da sua rede Wi-Fi nas linhas:
    ```cpp
    const char* WIFI_SSID     = "SEU_WIFI_AQUI";
@@ -521,9 +521,9 @@ O código-fonte completo está em [`DryboxController/DryboxController.ino`](file
 
 ### Opção B: Upload via PlatformIO (VS Code - Recomendado)
 1. Instale o **Visual Studio Code** e a extensão **PlatformIO IDE**.
-2. Abra a pasta do projeto `D:\Users\Guilherme\Projetos\drybox`.
-3. O arquivo [`platformio.ini`](file:///D:/Users/Guilherme/Projetos/drybox/platformio.ini) já está configurado sob medida para o **ESP32-S3 N16R8** com 16MB de Flash, 8MB de PSRAM OPI e todas as bibliotecas.
-4. Ajuste seu SSID e senha no arquivo [`DryboxController/DryboxController.ino`](file:///D:/Users/Guilherme/Projetos/drybox/DryboxController/DryboxController.ino).
+2. Abra a pasta do projeto no VS Code.
+3. O arquivo [`platformio.ini`](platformio.ini) já está configurado sob medida para o **ESP32-S3 N16R8** com 16MB de Flash, 8MB de PSRAM OPI e todas as bibliotecas.
+4. Ajuste seu SSID e senha no arquivo [`DryboxController/DryboxController.ino`](DryboxController/DryboxController.ino).
 5. Clique no ícone de visto (**PlatformIO: Build**) e depois na seta (**PlatformIO: Upload**). As dependências serão baixadas automaticamente.
 
 ---
