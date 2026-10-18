@@ -1,11 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-// Read ZIP file to Base64 for instant offline download
 const zipBuffer = fs.readFileSync('pcb/drybox_motherboard_gerber.zip');
 const zipBase64 = zipBuffer.toString('base64');
 
-console.log('ZIP loaded for embedding, base64 length:', zipBase64.length);
+console.log('ZIP loaded, base64 length:', zipBase64.length);
 
 const html = `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -22,9 +21,6 @@ const html = `<!DOCTYPE html>
       --border-focus: #38bdf8;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --pcb-green: #0f4a2b;
-      --pcb-black: #141619;
-      --pcb-blue: #0b2545;
       --copper-top: #ef4444;
       --copper-bottom: #3b82f6;
       --copper-pad: #f59e0b;
@@ -103,7 +99,7 @@ const html = `<!DOCTYPE html>
       max-width: 1100px;
     }
 
-    /* BARRA DE AÇÃO PRINCIPAL */
+    /* BANNER DE AÇÃO PRINCIPAL */
     .action-banner {
       width: 100%;
       max-width: 1400px;
@@ -160,7 +156,7 @@ const html = `<!DOCTYPE html>
       width: 100%;
       max-width: 1400px;
       display: grid;
-      grid-template-columns: 1fr 380px;
+      grid-template-columns: 1fr 400px;
       gap: 24px;
       margin-bottom: 35px;
     }
@@ -241,7 +237,7 @@ const html = `<!DOCTYPE html>
     /* SVG DA PLACA (ESCALA REAL 100x100mm) */
     .pcb-frame {
       width: 100%;
-      max-width: 650px;
+      max-width: 720px;
       aspect-ratio: 1/1;
       background: #000;
       border-radius: 12px;
@@ -291,7 +287,7 @@ const html = `<!DOCTYPE html>
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      padding: 8px 10px;
+      padding: 9px 12px;
       background: var(--bg-surface);
       border-radius: 8px;
       border: 1px solid #1e293b;
@@ -305,7 +301,7 @@ const html = `<!DOCTYPE html>
     }
 
     .comp-tag {
-      padding: 3px 8px;
+      padding: 4px 8px;
       border-radius: 4px;
       font-weight: 800;
       font-size: 0.8rem;
@@ -321,12 +317,12 @@ const html = `<!DOCTYPE html>
 
     .comp-title {
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       color: #f1f5f9;
     }
 
     .comp-desc {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: #94a3b8;
     }
 
@@ -410,14 +406,14 @@ const html = `<!DOCTYPE html>
       <span class="pill">Furação M3 nos 4 Cantos</span>
     </div>
     <h1>Placa Mãe / Carrier Shield PCB • Drybox 60L Pro</h1>
-    <p>Placa de circuito impresso unificada projetada para eliminar toda a fiação solta do sistema. Conecte e solde diretamente os bornes de parafuso, o ESP32-S3 DevKitC-1 N16R8, o Step-Down LM2596 e os módulos MOSFET HW-532 com segurança e acabamento profissional.</p>
+    <p>Placa de circuito impresso unificada projetada para eliminar 100% da fiação solta do sistema. Todos os locais de componentes possuem serigrafia clara e explícita indicando onde soldar cada peça, pinagens e polaridades.</p>
   </header>
 
   <!-- BANNER DE DOWNLOAD DIRETO DO ZIP GERBER -->
   <div class="action-banner">
     <div class="action-text">
-      <h2>📦 Pacote de Fabricação Gerber RS-274X Pronto</h2>
-      <p>Arquivo ZIP padronizado contendo Cobre (Top/Bottom), Máscara de Solda, Serigrafia, Contorno e Furação Excellon (.drl).</p>
+      <h2>📦 Pacote Oficial Gerber RS-274X Pronto</h2>
+      <p>Arquivo ZIP padronizado contendo Cobre (Top/Bottom), Máscara de Solda, Serigrafia com todas as marcações escritas, Contorno e Furação Excellon (.drl).</p>
     </div>
     <a id="downloadBtn" class="btn-download" href="data:application/zip;base64,${zipBase64}" download="drybox_motherboard_gerber.zip">
       <span>⬇️ Baixar Arquivo Gerber (.ZIP)</span>
@@ -429,7 +425,7 @@ const html = `<!DOCTYPE html>
     <div class="pcb-card">
       <div class="pcb-toolbar">
         <div class="toolbar-title">
-          <span>🔬 <strong>Visualizador Interativo de Camadas</strong> (Escala 100x100mm)</span>
+          <span>🔬 <strong>Visualizador Interativo com Serigrafia Escrita</strong></span>
         </div>
         <div class="layer-toggles">
           <div class="toggle-chip active" onclick="toggleLayer('layer-top', this)">
@@ -442,7 +438,7 @@ const html = `<!DOCTYPE html>
             <span class="dot dot-pad"></span> Ilhoses / Pads (PTH)
           </div>
           <div class="toggle-chip active" onclick="toggleLayer('layer-silk', this)">
-            <span class="dot dot-silk"></span> Serigrafia (F.SilkS)
+            <span class="dot dot-silk"></span> Serigrafia Escrita (F.SilkS)
           </div>
         </div>
       </div>
@@ -460,12 +456,11 @@ const html = `<!DOCTYPE html>
             </radialGradient>
           </defs>
 
-          <!-- 1. SUBSTRATO FR4 DA PLACA (100x100mm com cantos arredondados R=2mm) -->
+          <!-- 1. SUBSTRATO FR4 DA PLACA (100x100mm com cantos arredondados R=2.5mm) -->
           <rect x="0" y="0" width="100" height="100" rx="2.5" fill="url(#pcbSubstrate)" stroke="#38bdf8" stroke-width="0.3" filter="url(#pcbShadow)"/>
 
           <!-- 2. CAMADA BOTTOM COPPER (B.Cu - Azul Translúcido) -->
-          <g id="layer-bottom" opacity="0.6">
-            <!-- Trilhas de alta potência e barramentos no bottom -->
+          <g id="layer-bottom" opacity="0.55">
             <line x1="15" y1="90" x2="30" y2="90" stroke="#3b82f6" stroke-width="3.0" stroke-linecap="round"/>
             <line x1="37.5" y1="90" x2="52" y2="68" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round"/>
             <line x1="52" y1="68" x2="52" y2="44" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round"/>
@@ -477,31 +472,22 @@ const html = `<!DOCTYPE html>
 
           <!-- 3. CAMADA TOP COPPER (F.Cu - Vermelho / Cobre Brilhante) -->
           <g id="layer-top" opacity="0.85">
-            <!-- Trilha 24V Entrada -> Fusível (3.0mm) -->
             <line x1="15" y1="90" x2="30" y2="90" stroke="#ef4444" stroke-width="3.0" stroke-linecap="round"/>
-            <!-- Trilha Fusível -> Step-Down IN+ (2.5mm) -->
             <line x1="37.5" y1="90" x2="50" y2="95" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
-            <!-- Trilha Fusível -> MOSFET 1 e 2 (2.5mm) -->
             <line x1="37.5" y1="90" x2="52" y2="68" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
             <line x1="52" y1="68" x2="52" y2="44" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
             <line x1="52" y1="68" x2="90" y2="72" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
             <line x1="90" y1="72" x2="90" y2="42" stroke="#ef4444" stroke-width="2.0" stroke-linecap="round"/>
             <line x1="90" y1="42" x2="90" y2="27" stroke="#ef4444" stroke-width="2.0" stroke-linecap="round"/>
-            <!-- Trilha OUT Termofusível -> Borne Aquecedor PTC (3.0mm) -->
             <line x1="90" y1="66.92" x2="90" y2="57.0" stroke="#ef4444" stroke-width="3.0" stroke-linecap="round"/>
-            <!-- Trilha MOSFET 1 OUT -> Borne Aquecedor PTC (-) (3.0mm) -->
             <line x1="62.16" y1="68" x2="90" y2="51.92" stroke="#f97316" stroke-width="3.0" stroke-linecap="round"/>
-            <!-- Trilha MOSFET 2 OUT -> Borne Purga (-) (2.5mm) -->
             <line x1="62.16" y1="44" x2="90" y2="21.92" stroke="#f97316" stroke-width="2.5" stroke-linecap="round"/>
-            <!-- Trilha Step-Down OUT+ (5V) -> Borne 5V ESP32 (1.5mm) -->
             <line x1="88" y1="95" x2="40" y2="95" stroke="#ec4899" stroke-width="1.5" stroke-linecap="round"/>
             <line x1="40" y1="95" x2="37.4" y2="78" stroke="#ec4899" stroke-width="1.5" stroke-linecap="round"/>
-            <!-- Trilha 3.3V ESP32 -> Display LED e Sensores (1.0mm) -->
             <line x1="37.4" y1="44.98" x2="42" y2="44.98" stroke="#a855f7" stroke-width="1.0"/>
             <line x1="42" y1="44.98" x2="42" y2="15" stroke="#a855f7" stroke-width="1.0"/>
             <line x1="42" y1="15" x2="37.78" y2="8" stroke="#a855f7" stroke-width="1.0"/>
             <line x1="42" y1="15" x2="80" y2="8" stroke="#a855f7" stroke-width="0.8"/>
-            <!-- Sinais PWM ESP32 -> MOSFETs -->
             <line x1="37.4" y1="67.84" x2="52" y2="58" stroke="#22c55e" stroke-width="0.6"/>
             <line x1="37.4" y1="65.3" x2="52" y2="34" stroke="#4ade80" stroke-width="0.6"/>
           </g>
@@ -541,7 +527,6 @@ const html = `<!DOCTYPE html>
             <circle cx="88" cy="80" r="0.6" fill="#000"/>
 
             <!-- ESP32-S3 (44 pads) -->
-            <!-- Barra Esquerda (22) -->
             <g>
               ${Array.from({length: 22}).map((_, i) => {
                 const y = 78.0 - (i * 2.54);
@@ -550,7 +535,6 @@ const html = `<!DOCTYPE html>
                   : `<circle cx="12.0" cy="${y.toFixed(2)}" r="0.9" fill="#f59e0b"/><circle cx="12.0" cy="${y.toFixed(2)}" r="0.45" fill="#000"/>`;
               }).join('\n')}
             </g>
-            <!-- Barra Direita (22) -->
             <g>
               ${Array.from({length: 22}).map((_, i) => {
                 const y = 78.0 - (i * 2.54);
@@ -620,15 +604,15 @@ const html = `<!DOCTYPE html>
             </g>
           </g>
 
-          <!-- 5. CAMADA SERIGRAFIA (F.SilkS - Branco Nítido) -->
+          <!-- 5. CAMADA SERIGRAFIA ESCRITA (F.SilkS - 100% VISÍVEL E BOLD) -->
           <g id="layer-silk" stroke="#ffffff" stroke-width="0.2" fill="none">
             <!-- Contornos dos Módulos -->
             <rect x="12" y="85" width="11" height="10" rx="0.5"/>
             <rect x="27" y="85" width="13.5" height="10" rx="0.5"/>
-            <rect x="48" y="77" width="42" height="21" rx="0.8"/>
-            <rect x="10" y="22" width="29.4" height="59" rx="0.8"/>
-            <rect x="49" y="55" width="20" height="17" rx="0.5"/>
-            <rect x="49" y="31" width="20" height="17" rx="0.5"/>
+            <rect x="48" y="77" width="42" height="20" rx="0.8"/>
+            <rect x="10" y="22" width="29.4" height="59.5" rx="0.8"/>
+            <rect x="49" y="55" width="21" height="18" rx="0.5"/>
+            <rect x="49" y="31" width="21" height="18" rx="0.5"/>
             <rect x="86" y="64" width="10" height="11" rx="0.5"/>
             <rect x="86" y="49" width="10" height="11" rx="0.5"/>
             <rect x="86" y="34" width="10" height="11" rx="0.5"/>
@@ -637,28 +621,94 @@ const html = `<!DOCTYPE html>
             <rect x="63" y="5" width="11.5" height="6" rx="0.5"/>
             <rect x="78" y="5" width="11.5" height="6" rx="0.5"/>
 
-            <!-- Textos de Serigrafia em Vetor -->
-            <text x="50" y="3" fill="#ffffff" stroke="none" font-size="1.5" font-family="monospace" font-weight="bold" text-anchor="middle">DRYBOX 60L PRO • MOTHERBOARD SHIELD v1.0</text>
-            <text x="50" y="97.5" fill="#94a3b8" stroke="none" font-size="1.1" font-family="monospace" text-anchor="middle">PCBWAY / JLCPCB • 100x100mm 2-LAYER FR4 1.6mm</text>
+            <!-- TEXTOS E NOMES CLAROS DOS COMPONENTES -->
+            <text x="50" y="98.5" fill="#ffffff" stroke="none" font-size="1.4" font-weight="bold" text-anchor="middle">DRYBOX 60L PRO • MOTHERBOARD CARRIER SHIELD v1.1</text>
+            <text x="50" y="1.2" fill="#94a3b8" stroke="none" font-size="1.0" text-anchor="middle">PCBWAY / JLCPCB • 100x100mm 2-LAYER FR4 1.6mm</text>
             
-            <text x="17.5" y="83.5" fill="#ffffff" stroke="none" font-size="1.0" font-weight="bold" text-anchor="middle">ENTRADA 24V</text>
-            <text x="33.7" y="83.5" fill="#ffffff" stroke="none" font-size="1.0" font-weight="bold" text-anchor="middle">FUSÍVEL 10A</text>
-            <text x="69" y="88" fill="#38bdf8" stroke="none" font-size="1.3" font-weight="bold" text-anchor="middle">LM2596 (5.00V)</text>
+            <!-- ENTRADA 24V E FUSÍVEL -->
+            <text x="17.5" y="96.2" fill="#38bdf8" stroke="none" font-size="1.0" font-weight="bold" text-anchor="middle">J1: ENTRADA 24V</text>
+            <text x="15.0" y="86.5" fill="#fca5a5" stroke="none" font-size="0.9" font-weight="bold" text-anchor="middle">+24V</text>
+            <text x="20.08" y="86.5" fill="#bae6fd" stroke="none" font-size="0.9" font-weight="bold" text-anchor="middle">GND</text>
+
+            <text x="33.7" y="96.2" fill="#ef4444" stroke="none" font-size="1.0" font-weight="bold" text-anchor="middle">F1: FUSÍVEL 10A</text>
+            <text x="33.7" y="86.5" fill="#ffffff" stroke="none" font-size="0.8" text-anchor="middle">LÂMINA</text>
+
+            <!-- STEP-DOWN LM2596 -->
+            <text x="69" y="90" fill="#38bdf8" stroke="none" font-size="1.3" font-weight="bold" text-anchor="middle">STEP-DOWN LM2596 (5.00V)</text>
+            <text x="69" y="86" fill="#fde047" stroke="none" font-size="0.8" font-weight="bold" text-anchor="middle">CALIBRAR EM 5.00V ANTES DE PLUGAR ESP32!</text>
+            <text x="53.5" y="94.5" fill="#fca5a5" stroke="none" font-size="0.8" font-weight="bold">IN+</text>
+            <text x="53.5" y="81.5" fill="#bae6fd" stroke="none" font-size="0.8" font-weight="bold">IN-</text>
+            <text x="78.0" y="94.5" fill="#f472b6" stroke="none" font-size="0.8" font-weight="bold">OUT+ (5V)</text>
+            <text x="78.0" y="81.5" fill="#bae6fd" stroke="none" font-size="0.8" font-weight="bold">OUT- (GND)</text>
             
-            <text x="24.7" y="52" fill="#38bdf8" stroke="none" font-size="1.6" font-weight="bold" text-anchor="middle">ESP32-S3</text>
-            <text x="24.7" y="48" fill="#cbd5e1" stroke="none" font-size="1.1" text-anchor="middle">DEVKITC-1</text>
-            
-            <text x="59" y="70" fill="#f87171" stroke="none" font-size="1.1" font-weight="bold" text-anchor="middle">MOSFET 1 (PTC)</text>
-            <text x="59" y="46" fill="#38bdf8" stroke="none" font-size="1.1" font-weight="bold" text-anchor="middle">MOSFET 2 (PURGA)</text>
-            
-            <text x="73" y="70" fill="#ffffff" stroke="none" font-size="0.9" text-anchor="middle">75°C TF</text>
-            <text x="73" y="55" fill="#f87171" stroke="none" font-size="0.9" font-weight="bold" text-anchor="middle">PTC (+/-)</text>
-            <text x="73.5" y="40" fill="#38bdf8" stroke="none" font-size="0.9" text-anchor="middle">FAN PTC</text>
-            <text x="73.5" y="25" fill="#38bdf8" stroke="none" font-size="0.9" text-anchor="middle">PURGA 24V</text>
-            
-            <text x="36" y="12" fill="#fbbf24" stroke="none" font-size="0.9" font-weight="bold" text-anchor="middle">DISPLAY TFT (LED: 3.3V ⚠️)</text>
-            <text x="69" y="12" fill="#facc15" stroke="none" font-size="0.9" text-anchor="middle">SHT31 #1</text>
-            <text x="84" y="12" fill="#facc15" stroke="none" font-size="0.9" text-anchor="middle">SHT31 #2</text>
+            <!-- ESP32-S3 DEVKITC-1 -->
+            <text x="24.7" y="58" fill="#38bdf8" stroke="none" font-size="1.6" font-weight="bold" text-anchor="middle">ESP32-S3 DEVKITC-1</text>
+            <text x="24.7" y="54" fill="#ffffff" stroke="none" font-size="1.1" font-weight="bold" text-anchor="middle">N16R8 (16MB / 8MB)</text>
+            <text x="24.7" y="49" fill="#cbd5e1" stroke="none" font-size="0.8" text-anchor="middle">SOLDAR 2x BARRAS FÊMEA 22 PINOS</text>
+            <text x="24.7" y="45.5" fill="#cbd5e1" stroke="none" font-size="0.75" text-anchor="middle">LADO DIREITO: CONTROLE E DADOS</text>
+
+            <!-- PINOS INDIVIDUAIS DO ESP32-S3 -->
+            <text x="14.5" y="78.2" fill="#c084fc" stroke="none" font-size="0.75" font-weight="bold">3V3</text>
+            <text x="14.5" y="75.6" fill="#94a3b8" stroke="none" font-size="0.75">EN</text>
+            <text x="14.5" y="47.2" fill="#38bdf8" stroke="none" font-size="0.75">GND</text>
+
+            <text x="34.0" y="78.2" fill="#ec4899" stroke="none" font-size="0.75" font-weight="bold">5V</text>
+            <text x="33.0" y="75.6" fill="#38bdf8" stroke="none" font-size="0.75" font-weight="bold">GND</text>
+            <text x="29.0" y="73.1" fill="#eab308" stroke="none" font-size="0.75">4(SDA)</text>
+            <text x="29.0" y="70.5" fill="#f59e0b" stroke="none" font-size="0.75">5(SCL)</text>
+            <text x="29.0" y="68.0" fill="#22c55e" stroke="none" font-size="0.75" font-weight="bold">6(PTC)</text>
+            <text x="27.0" y="65.5" fill="#4ade80" stroke="none" font-size="0.75" font-weight="bold">7(PURGA)</text>
+            <text x="28.5" y="62.9" fill="#38bdf8" stroke="none" font-size="0.75">8(T_CS)</text>
+            <text x="31.0" y="60.4" fill="#38bdf8" stroke="none" font-size="0.75">9(DC)</text>
+            <text x="30.0" y="57.8" fill="#38bdf8" stroke="none" font-size="0.75">10(CS)</text>
+            <text x="27.5" y="55.3" fill="#c084fc" stroke="none" font-size="0.75">11(MOSI)</text>
+            <text x="28.5" y="52.8" fill="#c084fc" stroke="none" font-size="0.75">12(SCK)</text>
+            <text x="27.5" y="50.2" fill="#c084fc" stroke="none" font-size="0.75">13(MISO)</text>
+            <text x="28.5" y="47.7" fill="#38bdf8" stroke="none" font-size="0.75">14(RST)</text>
+            <text x="30.0" y="45.1" fill="#c084fc" stroke="none" font-size="0.75" font-weight="bold">3.3V</text>
+
+            <text x="24.7" y="24" fill="#f87171" stroke="none" font-size="0.7" font-weight="bold" text-anchor="middle">⚠️ BORNES 35, 36, 37 PROIBIDOS (PSRAM)</text>
+
+            <!-- MOSFETS 1 E 2 -->
+            <text x="59.5" y="72" fill="#f87171" stroke="none" font-size="1.1" font-weight="bold" text-anchor="middle">MOSFET 1: AQUECEDOR PTC</text>
+            <text x="59.5" y="64.5" fill="#ffffff" stroke="none" font-size="0.85" text-anchor="middle">V+   V-   OUT</text>
+            <text x="54.0" y="60" fill="#22c55e" stroke="none" font-size="0.8" font-weight="bold">PWM  G</text>
+            <text x="59.5" y="56.5" fill="#94a3b8" stroke="none" font-size="0.7" text-anchor="middle">MODULO HW-532 (LR7843)</text>
+
+            <text x="59.5" y="48" fill="#38bdf8" stroke="none" font-size="1.1" font-weight="bold" text-anchor="middle">MOSFET 2: PURGA 24V</text>
+            <text x="59.5" y="40.5" fill="#ffffff" stroke="none" font-size="0.85" text-anchor="middle">V+   V-   OUT</text>
+            <text x="54.0" y="36" fill="#4ade80" stroke="none" font-size="0.8" font-weight="bold">PWM  G</text>
+            <text x="59.5" y="32.5" fill="#94a3b8" stroke="none" font-size="0.7" text-anchor="middle">MODULO HW-532 (LR7843)</text>
+
+            <!-- BORNES DE SAÍDA (BORDA DIREITA) -->
+            <text x="73" y="70" fill="#ffffff" stroke="none" font-size="0.9" font-weight="bold" text-anchor="middle">J3: TF 75°C</text>
+            <text x="86.0" y="73" fill="#fca5a5" stroke="none" font-size="0.8">(+)</text>
+            <text x="86.0" y="66" fill="#fca5a5" stroke="none" font-size="0.8">RET</text>
+
+            <text x="73" y="55" fill="#f87171" stroke="none" font-size="0.9" font-weight="bold" text-anchor="middle">J2: PTC 150W</text>
+            <text x="86.0" y="58" fill="#fca5a5" stroke="none" font-size="0.8">(+)</text>
+            <text x="86.0" y="51" fill="#fcd34d" stroke="none" font-size="0.8">(-)</text>
+
+            <text x="73.5" y="40" fill="#38bdf8" stroke="none" font-size="0.9" font-weight="bold" text-anchor="middle">J4: FAN PTC</text>
+            <text x="86.0" y="43" fill="#fca5a5" stroke="none" font-size="0.8">(+)</text>
+            <text x="86.0" y="36" fill="#bae6fd" stroke="none" font-size="0.8">(-)</text>
+
+            <text x="73.5" y="25" fill="#38bdf8" stroke="none" font-size="0.9" font-weight="bold" text-anchor="middle">J5: PURGA 24V</text>
+            <text x="86.0" y="28" fill="#fca5a5" stroke="none" font-size="0.8">(+)</text>
+            <text x="86.0" y="21" fill="#fcd34d" stroke="none" font-size="0.8">(-)</text>
+
+            <!-- DISPLAY TFT E SENSORES -->
+            <text x="36.5" y="14.8" fill="#38bdf8" stroke="none" font-size="0.95" font-weight="bold" text-anchor="middle">J6: DISPLAY TFT 2.4" SPI + TOUCH RESISTIVO</text>
+            <text x="36.5" y="12.0" fill="#cbd5e1" stroke="none" font-size="0.75" text-anchor="middle">1:5V  2:GND  3:CS  4:RST  5:DC  6:MOSI  7:SCK</text>
+            <text x="36.5" y="2.5" fill="#f43f5e" stroke="none" font-size="0.75" font-weight="bold" text-anchor="middle">8:LED (3.3V OBRIGATÓRIO! ⚠️)  9:MISO  10:CLK  11:T_CS  12:DIN  13:DO  14:NC</text>
+
+            <text x="69" y="14.5" fill="#facc15" stroke="none" font-size="0.85" font-weight="bold" text-anchor="middle">J7: SHT31 #1</text>
+            <text x="69" y="12.0" fill="#94a3b8" stroke="none" font-size="0.75" text-anchor="middle">INTERNO 0x44</text>
+            <text x="69" y="2.5" fill="#ffffff" stroke="none" font-size="0.7" text-anchor="middle">3V3 G SCL SDA</text>
+
+            <text x="84" y="14.5" fill="#facc15" stroke="none" font-size="0.85" font-weight="bold" text-anchor="middle">J8: SHT31 #2</text>
+            <text x="84" y="12.0" fill="#94a3b8" stroke="none" font-size="0.75" text-anchor="middle">EXTERNO 0x45</text>
+            <text x="84" y="2.5" fill="#ffffff" stroke="none" font-size="0.7" text-anchor="middle">3V3 G SCL SDA</text>
           </g>
         </svg>
       </div>
@@ -667,13 +717,13 @@ const html = `<!DOCTYPE html>
     <!-- PAINEL LATERAL DE DETALHES -->
     <div class="sidebar-panel">
       <div class="panel-card">
-        <h3>📋 Módulos e Soquetes</h3>
+        <h3>📋 Módulos e Componentes a Soldar</h3>
         
         <div class="comp-item">
           <span class="comp-tag">U1</span>
           <div class="comp-info">
             <span class="comp-title">ESP32-S3 DevKitC-1 N16R8</span>
-            <span class="comp-desc">2x Barras fêmea 22 pinos (passo 2.54mm, largura 25.4mm)</span>
+            <span class="comp-desc">Soldar 2x barras fêmea 22 pinos (passo 2.54mm, largura 25.4mm)</span>
           </div>
         </div>
 
@@ -681,7 +731,7 @@ const html = `<!DOCTYPE html>
           <span class="comp-tag">U2</span>
           <div class="comp-info">
             <span class="comp-title">Step-Down LM2596 (5.00V)</span>
-            <span class="comp-desc">Ilhoses para parafusos/pinos nos 4 cantos do módulo</span>
+            <span class="comp-desc">Pinos nos 4 cantos do módulo: IN+, IN-, OUT+, OUT-</span>
           </div>
         </div>
 
@@ -689,7 +739,7 @@ const html = `<!DOCTYPE html>
           <span class="comp-tag">M1-2</span>
           <div class="comp-info">
             <span class="comp-title">2x Módulos MOSFET HW-532</span>
-            <span class="comp-desc">Pinos V+, V-, OUT (5.08mm) e PWM, GND (2.54mm)</span>
+            <span class="comp-desc">Soldar barras nos pads V+, V-, OUT (5.08mm) e PWM, GND (2.54mm)</span>
           </div>
         </div>
 
@@ -697,15 +747,15 @@ const html = `<!DOCTYPE html>
           <span class="comp-tag">F1</span>
           <div class="comp-info">
             <span class="comp-title">Fusível Automotivo 10A</span>
-            <span class="comp-desc">Suporte para fusível lâmina (Keystone 3557 ou padrão)</span>
+            <span class="comp-desc">Soquete para fusível lâmina automotivo médio/mini</span>
           </div>
         </div>
 
         <div class="comp-item">
           <span class="comp-tag">J1-5</span>
           <div class="comp-info">
-            <span class="comp-title">5x Bornes de Parafuso KF301</span>
-            <span class="comp-desc">Passo 5.08mm de 2 vias (24V IN, PTC, TF, Fan, Purga)</span>
+            <span class="comp-title">5x Bornes KF301 de Parafuso</span>
+            <span class="comp-desc">Entrada 24V, PTC 150W, TF 75°C, Fan PTC e Purga 24V</span>
           </div>
         </div>
 
@@ -713,18 +763,18 @@ const html = `<!DOCTYPE html>
           <span class="comp-tag">J6-8</span>
           <div class="comp-info">
             <span class="comp-title">Conectores Display e Sensores</span>
-            <span class="comp-desc">1x Barra 14 pinos (Display) e 2x 4 pinos (SHT31 I2C)</span>
+            <span class="comp-desc">1x Barra 14 pinos (Display) e 2x conectores 4 pinos (SHT31)</span>
           </div>
         </div>
       </div>
 
       <div class="panel-card">
-        <h3>⚡ Parâmetros de Alta Corrente</h3>
+        <h3>⚡ Segurança e Alta Corrente</h3>
         <p style="font-size:0.85rem; color:#cbd5e1; margin:0;">
-          • As trilhas de 24V possuem <strong>3,0 mm de largura em ambas as camadas</strong> (Top e Bottom em paralelo), suportando até 10A contínuos com elevação térmica mínima.
+          • As trilhas de 24V possuem <strong>3,0 mm de largura em ambas as camadas</strong> (Top e Bottom em paralelo), suportando até 10A contínuos.
         </p>
         <p style="font-size:0.85rem; color:#cbd5e1; margin:0;">
-          • A máscara de solda inclui <strong>janelas de cobre exposto</strong> nas linhas do Aquecedor PTC, permitindo aplicar uma camada de solda (estanho) para reforçar a condução térmica e elétrica.
+          • Todas as marcações de pinagens e componentes estão impressas na serigrafia branca física para guiar a soldagem sem dúvidas!
         </p>
       </div>
     </div>
@@ -788,20 +838,8 @@ const html = `<!DOCTYPE html>
     </table>
   </div>
 
-  <!-- CHECKLIST DE MONTAGEM E SOLDA -->
-  <div class="specs-card">
-    <h3>🛠️ Roteiro de Montagem e Testes de Bancada</h3>
-    <ol style="color:#cbd5e1; line-height: 1.8; margin-top: 10px; padding-left: 20px;">
-      <li><strong>Soldar os componentes mais baixos primeiro</strong>: Comece pelas barras de pinos (headers fêmea do ESP32 e do Display).</li>
-      <li><strong>Soldar os bornes de parafuso KF301 e o porta-fusível</strong>: Certifique-se de soldar com boa penetração de estanho nos furos dos bornes de 24V.</li>
-      <li><strong>Reforço de estanho nas trilhas de potência (Opcional, mas recomendado)</strong>: Passe o ferro de solda com um pouco de estanho nas trilhas expostas de 24V que vão para o Aquecedor PTC.</li>
-      <li><strong>Ajuste Vital do Step-Down LM2596</strong>: Antes de plugar o ESP32-S3 nos soquetes, ligue a fonte 24V e gire o trimpot do Step-Down até o voltímetro cravar exatamente <strong>5.00V</strong> no borne OUT.</li>
-      <li><strong>Plugar o ESP32-S3 e Periféricos</strong>: Com a placa desligada, plugue o ESP32, o display e os sensores SHT31. Ligue e aproveite sua drybox 100% profissional e sem nenhum fio solto!</li>
-    </ol>
-  </div>
-
   <footer>
-    Drybox 60L Pro • Placa de Circuito Impresso Carrier Shield v1.0 • Desenvolvido para fabricação industrial em PCBWay / JLCPCB
+    Drybox 60L Pro • Placa de Circuito Impresso Carrier Shield v1.1 • Desenvolvido para fabricação industrial em PCBWay / JLCPCB
   </footer>
 
   <script>
@@ -822,4 +860,4 @@ const html = `<!DOCTYPE html>
 `;
 
 fs.writeFileSync('placa_circuito_impresso.html', html, 'utf8');
-console.log('placa_circuito_impresso.html generated successfully!');
+console.log('placa_circuito_impresso.html updated successfully with detailed silkscreen!');

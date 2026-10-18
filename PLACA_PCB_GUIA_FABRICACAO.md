@@ -60,6 +60,28 @@ Todos os arquivos estão organizados no repositório:
 
 ---
 
+## 🏷️ Marcações Escritas Diretamente na Placa (Serigrafia / Silkscreen)
+
+Todas as áreas da placa possuem serigrafia branca física (`F_Silkscreen.gto`) com textos vetoriais nítidos gravados na máscara para você não ter dúvidas na hora de soldar e montar:
+
+| Localização na Placa | Texto Impresso na Serigrafia | O Que Deve Ser Soldado / Encaixado |
+| :--- | :--- | :--- |
+| **Centro-Esquerdo** | `ESP32-S3 DEVKITC-1 N16R8`<br>`SOLDAR 2x BARRAS FÊMEA 22 PINOS`<br>`PINOS: 5V, GND, 4:SDA, 5:SCL, 6:PTC, 7:PURGA, ...`<br>`⚠️ BORNES 35, 36, 37 PROIBIDOS (PSRAM)` | 2 Barras de pinos fêmea 2,54 mm para encaixar o ESP32-S3. |
+| **Topo-Esquerdo** | `J1: ENTRADA 24V (+24V / GND)` | Borne de parafuso KF301 de 2 vias para a Fonte Industrial 24V. |
+| **Topo-Esquerdo** | `F1: FUSÍVEL 10A LÂMINA` | Soquete de fusível lâmina automotivo para o fusível de 10A. |
+| **Topo-Centro** | `STEP-DOWN LM2596 (REGULADOR 5.00V)`<br>`CALIBRAR EM 5.00V ANTES DE PLUGAR ESP32!`<br>`IN+, IN-, OUT+ (5V), OUT- (GND)` | Módulo conversor DC-DC LM2596 soldado ou encaixado nos 4 furos dos cantos. |
+| **Centro-Direito** | `MOSFET 1: AQUECEDOR PTC (MODULO HW-532)`<br>`V+, V-, OUT, PWM (GPIO 6), GND` | Primeiro módulo MOSFET HW-532 (controla a resistência do PTC). |
+| **Centro-Direito** | `MOSFET 2: PURGA 24V (MODULO HW-532)`<br>`V+, V-, OUT, PWM (GPIO 7), GND` | Segundo módulo MOSFET HW-532 (controla as 2 ventoinhas de purga). |
+| **Borda Direita (Topo)** | `J3: TERMOFUSÍVEL 75°C (+ / RET)` | Borne KF301 de 2 vias em série com a resistência PTC. |
+| **Borda Direita** | `J2: AQUECEDOR PTC (+ / -)` | Borne KF301 de 2 vias para os 2 fios grossos do Aquecedor PTC 150W. |
+| **Borda Direita** | `J4: FAN PTC 24V (+ / -)` | Borne KF301 de 2 vias para a ventoinha interna contínua do PTC. |
+| **Borda Direita (Base)** | `J5: PURGA 24V (+ / -)` | Borne KF301 de 2 vias para os fios em paralelo das 2 ventoinhas 6015. |
+| **Base-Esquerda** | `J6: DISPLAY TFT 2.4" SPI + TOUCH RESISTIVO`<br>`1:5V 2:GND 3:CS 4:RST 5:DC 6:MOSI 7:SCK`<br>`8:LED (3.3V OBRIGATÓRIO! ⚠️) 9:MISO 10:CLK 11:T_CS 12:DIN 13:DO 14:NC` | Barra de 14 pinos fêmea para o cabo do Display TFT 2.4" Touch. |
+| **Base-Direita** | `J7: SHT31 #1 INTERNO 0x44 (3V3 G SCL SDA)` | Conector de 4 pinos para o sensor de temperatura/umidade interno. |
+| **Base-Direita** | `J8: SHT31 #2 EXTERNO 0x45 (3V3 G SCL SDA)` | Conector de 4 pinos para o sensor de referência externo. |
+
+---
+
 ## 🔩 Lista de Componentes para Soldar na Placa (BOM)
 
 Todos os componentes a serem soldados são **Through-Hole (PTH)** de fácil soldagem manual com ferro de solda comum:
