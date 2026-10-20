@@ -20,6 +20,8 @@
 
 #include <WiFi.h>
 #include <WebServer.h>
+#include <DNSServer.h>
+#include <Preferences.h>
 #include <PubSubClient.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -30,15 +32,26 @@
 #include <math.h>
 
 // =====================================================================================
-//  1. CONFIGURAÇÕES DE REDE E TELEMETRIA (ALTERE CONFORME SUA REDE)
+//  1. CONFIGURAÇÕES DE REDE, PERSISTÊNCIA NVS E TELEMETRIA
 // =====================================================================================
-const char* WIFI_SSID     = "SEU_WIFI_AQUI";
-const char* WIFI_PASSWORD = "SUA_SENHA_AQUI";
+Preferences preferences;
+DNSServer dnsServer;
 
-// Configurações do Broker MQTT (opcional / Home Assistant)
-const char* MQTT_BROKER    = "192.168.1.100";
+// Credenciais dinâmicas carregadas da memória Flash (NVS)
+String wifiSSID = "";
+String wifiPassword = "";
+String mqttBroker = "192.168.1.100";
 const int   MQTT_PORT      = 1883;
 const char* MQTT_TOPIC_PUB = "drybox/telemetria";
+
+// Estado de Conectividade e Portal de Configuração Não-Bloqueante
+bool modoAPAtivo = false;
+unsigned long apInicioMs = 0;
+const unsigned long AP_TIMEOUT_MS = 180000; // 3 minutos de timeout para o portal AP se inativo
+bool wifiConfigurado = false;
+bool ultimoStatusWifiConectado = false;
+unsigned long wifiTentativaInicioMs = 0;
+unsigned long ultimaTentativaWifi = 0;
 
 // =====================================================================================
 //  2. PINAGEM DO HARDWARE E PWM LEDC (ESP32-S3 N16R8 - BORNES LADO DIREITO)
@@ -450,10 +463,22 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
   </div>
 
   <div class="footer">
-    ESP32 Drybox Firmware v2.0 • SHT31 Duplo + PID Anti-Windup • 24V DC
+    ESP32 Drybox Firmware v3.2 • SHT31 Duplo + PID Anti-Windup • 
+    <a href="javascript:void(0)" onclick="reconfigurarWifi()" style="color:#58a6ff;text-decoration:none;font-weight:600;">Reconfigurar Wi-Fi</a>
   </div>
 
   <script>
+    async function reconfigurarWifi() {
+      if (confirm('Deseja desconectar a Drybox e abrir o Ponto de Acesso (Drybox-Setup) para reconfigurar a rede Wi-Fi?')) {
+        try {
+          await fetch('/api/reset_wifi', { method: 'POST' });
+          alert('Ponto de Acesso ativado! Conecte seu celular na rede "Drybox-Setup" (192.168.4.1) para configurar.');
+        } catch (e) {
+          alert('Erro ao resetar Wi-Fi: ' + e);
+        }
+      }
+    }
+
     async function atualizarStatus() {
       try {
         const res = await fetch('/api/status');
@@ -534,10 +559,290 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
 )rawliteral";
 
 // =====================================================================================
-//  9. ROTAS DO SERVIDOR WEB
+//  8.1 PORTAL CATIVO DE ONBOARDING WI-FI (SOFTAP "Drybox-Setup")
 // =====================================================================================
+const char PORTAL_HTML[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Drybox 60L • Configuração Wi-Fi</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --card-border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --success: #238636;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container { width: 100%; max-width: 420px; }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 22px;
+      margin-top: 15px;
+    }
+    h1 { font-size: 1.3rem; color: #fff; text-align: center; margin-bottom: 4px; }
+    .subtitle { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 20px; }
+    label { font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 6px; color: var(--text); }
+    select, input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 11px 12px;
+      background: #0d1117;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.95rem;
+      margin-bottom: 14px;
+      outline: none;
+    }
+    select:focus, input:focus { border-color: var(--accent); }
+    .pass-container { position: relative; }
+    .btn-show {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 2px 6px;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 8px;
+      text-align: center;
+      display: block;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--success); color: #fff; }
+    .btn-secondary { background: #21262d; color: var(--text-muted); border: 1px solid var(--card-border); }
+    .info { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin-top: 16px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Dry Fila Box 60L</h1>
+      <p class="subtitle">Configuração de Rede Wi-Fi</p>
+      
+      <form id="wifiForm" action="/wifi/save" method="POST">
+        <label for="ssid">Selecione sua Rede Wi-Fi (2.4 GHz):</label>
+        <select id="ssid" name="ssid" onchange="verificarRedeManual()">
+          %NETWORKS%
+        </select>
+        
+        <div id="manualDiv" style="display:none;">
+          <label for="manual_ssid">Nome da Rede (SSID):</label>
+          <input type="text" id="manual_ssid" name="manual_ssid" placeholder="Digite o SSID...">
+        </div>
+
+        <label for="pass">Senha da Rede:</label>
+        <div class="pass-container">
+          <input type="password" id="pass" name="pass" placeholder="Digite a senha...">
+          <button type="button" class="btn-show" onclick="togglePass()">Mostrar</button>
+        </div>
+
+        <label for="mqtt">Broker MQTT (Opcional - IP Home Assistant):</label>
+        <input type="text" id="mqtt" name="mqtt" value="%MQTT_BROKER%" placeholder="192.168.1.100">
+
+        <button type="submit" class="btn btn-primary" id="btnSalvar">Salvar e Conectar</button>
+        <a href="/wifi/exit" class="btn btn-secondary">Usar em Modo Offline (Fechar)</a>
+      </form>
+
+      <p class="info">
+        💡 O Wi-Fi não é obrigatório. Você pode utilizar a Drybox normalmente sem conexão através do painel touch.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function togglePass() {
+      var p = document.getElementById('pass');
+      p.type = p.type === 'password' ? 'text' : 'password';
+    }
+    function verificarRedeManual() {
+      var s = document.getElementById('ssid');
+      var m = document.getElementById('manualDiv');
+      m.style.display = (s.value === '__MANUAL__') ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>
+)rawliteral";
+
+// Declaração antecipada da função de atualização do cabeçalho da tela
+void atualizarCabecalhoStatus(bool forceRedraw = false);
+
+// =====================================================================================
+//  9. ROTAS DO SERVIDOR WEB E GERENCIAMENTO DE REDE / PORTAL CATIVO
+// =====================================================================================
+void handlePortalRoot() {
+  int n = WiFi.scanNetworks();
+  String options = "";
+  if (n <= 0) {
+    options += "<option value='__MANUAL__'>Nenhuma rede encontrada (Digitar manual)</option>";
+  } else {
+    options += "<option value=''>-- Selecione sua rede Wi-Fi --</option>";
+    for (int i = 0; i < n; ++i) {
+      String s = WiFi.SSID(i);
+      int rssi = WiFi.RSSI(i);
+      if (s.length() > 0) {
+        options += "<option value='" + s + "'>" + s + " (" + String(rssi) + " dBm)</option>";
+      }
+    }
+    options += "<option value='__MANUAL__'>-- Digitar rede oculta / manual --</option>";
+  }
+
+  String html = FPSTR(PORTAL_HTML);
+  html.replace("%NETWORKS%", options);
+  html.replace("%MQTT_BROKER%", mqttBroker);
+
+  server.send(200, "text/html", html);
+}
+
+void desativarModoAP() {
+  if (modoAPAtivo) {
+    dnsServer.stop();
+    WiFi.softAPdisconnect(true);
+    modoAPAtivo = false;
+    Serial.println(F("[WIFI] Modo AP desativado."));
+    atualizarCabecalhoStatus(true);
+  }
+}
+
+void conectarWifiStation() {
+  desativarModoAP();
+  if (wifiSSID.length() > 0) {
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(wifiSSID.c_str(), wifiPassword.c_str());
+    wifiTentativaInicioMs = millis();
+    ultimoStatusWifiConectado = false;
+    Serial.print(F("[WIFI] Conectando a "));
+    Serial.println(wifiSSID);
+    atualizarCabecalhoStatus(true);
+  }
+}
+
+void iniciarModoAP() {
+  modoAPAtivo = true;
+  apInicioMs = millis();
+  WiFi.disconnect();
+  WiFi.mode(WIFI_AP_STA);
+  WiFi.softAP("Drybox-Setup");
+  IPAddress apIP(192, 168, 4, 1);
+  IPAddress netMsk(255, 255, 255, 0);
+  WiFi.softAPConfig(apIP, apIP, netMsk);
+  dnsServer.start(53, "*", apIP);
+  Serial.println(F("[WIFI] Modo AP ativado: rede 'Drybox-Setup' (192.168.4.1)"));
+  atualizarCabecalhoStatus(true);
+}
+
+void handlePortalSave() {
+  String ssid = server.arg("ssid");
+  if (ssid == "__MANUAL__" || ssid == "") {
+    ssid = server.arg("manual_ssid");
+  }
+  ssid.trim();
+  String pass = server.arg("pass");
+  pass.trim();
+  String mqtt = server.arg("mqtt");
+  mqtt.trim();
+
+  if (ssid.length() > 0) {
+    wifiSSID = ssid;
+    wifiPassword = pass;
+    if (mqtt.length() > 0) mqttBroker = mqtt;
+
+    preferences.begin("drybox_cfg", false);
+    preferences.putString("ssid", wifiSSID);
+    preferences.putString("pass", wifiPassword);
+    preferences.putString("mqtt", mqttBroker);
+    preferences.end();
+
+    wifiConfigurado = true;
+
+    String resp = F("<!DOCTYPE html><html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1.0'>"
+      "<style>body{background:#0d1117;color:#e6edf3;font-family:sans-serif;padding:30px;text-align:center;}"
+      ".box{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:24px;max-width:380px;margin:20px auto;}"
+      "h2{color:#238636;margin-bottom:12px;}p{color:#8b949e;line-height:1.5;}</style></head><body>"
+      "<div class='box'><h2>Configurações Salvas!</h2>"
+      "<p>A Drybox está conectando à rede <strong>");
+    resp += wifiSSID;
+    resp += F("</strong>.</p><p>Você já pode fechar esta tela e reconectar seu celular ao seu Wi-Fi normal.</p>"
+      "<p style='margin-top:16px;color:#58a6ff;'>O IP da Drybox será exibido no display TFT.</p></div></body></html>");
+
+    server.send(200, "text/html", resp);
+    delay(200);
+
+    conectarWifiStation();
+  } else {
+    server.send(400, "text/plain", "SSID invalido.");
+  }
+}
+
+void handlePortalExit() {
+  desativarModoAP();
+  server.send(200, "text/html",
+    F("<!DOCTYPE html><html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1.0'>"
+      "<style>body{background:#0d1117;color:#e6edf3;font-family:sans-serif;padding:30px;text-align:center;}"
+      ".box{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:24px;max-width:380px;margin:20px auto;}"
+      "h2{color:#58a6ff;margin-bottom:12px;}p{color:#8b949e;line-height:1.5;}</style></head><body>"
+      "<div class='box'><h2>Modo Offline Ativo</h2>"
+      "<p>Ponto de Acesso desligado. A Drybox continuará operando normalmente pelo painel touch.</p></div></body></html>"));
+}
+
+void handleCaptivePortal() {
+  if (modoAPAtivo) {
+    server.sendHeader("Location", "http://192.168.4.1/", true);
+    server.send(302, "text/plain", "");
+  } else {
+    server.send(404, "text/plain", "Nao encontrado");
+  }
+}
+
+void handleResetWifi() {
+  preferences.begin("drybox_cfg", false);
+  preferences.remove("ssid");
+  preferences.remove("pass");
+  preferences.end();
+  wifiConfigurado = false;
+  wifiSSID = "";
+  wifiPassword = "";
+
+  server.send(200, "application/json", "{\"status\":\"ok\",\"msg\":\"Credenciais apagadas. Modo AP ativado.\"}");
+  delay(100);
+  iniciarModoAP();
+}
+
 void handleRoot() {
-  server.send_P(200, "text/html", INDEX_HTML);
+  if (modoAPAtivo) {
+    handlePortalRoot();
+  } else {
+    server.send_P(200, "text/html", INDEX_HTML);
+  }
 }
 
 void handleStatusJson() {
@@ -711,6 +1016,41 @@ void destacarBotao(int x, int y, int w, int h) {
   desenharBotoesTouch();
 }
 
+static String ultimoStatusTexto = "";
+
+void atualizarCabecalhoStatus(bool forceRedraw) {
+  if (!tftAtivo) return;
+
+  String texto = "";
+  uint16_t cor = ILI9341_LIGHTGREY;
+
+  if (modoAPAtivo) {
+    texto = "AP: Drybox-Setup (192.168.4.1)";
+    cor = ILI9341_YELLOW;
+  } else if (WiFi.status() == WL_CONNECTED) {
+    texto = "IP: " + WiFi.localIP().toString();
+    cor = ILI9341_GREEN;
+  } else if (wifiConfigurado && (millis() - wifiTentativaInicioMs < 15000)) {
+    texto = "Conectando ao Wi-Fi...";
+    cor = ILI9341_LIGHTGREY;
+  } else {
+    texto = "Modo Offline (Toque p/ Wi-Fi)";
+    cor = ILI9341_CYAN;
+  }
+
+  if (forceRedraw || texto != ultimoStatusTexto) {
+    ultimoStatusTexto = texto;
+    tft.fillRect(0, 22, 320, 11, COR_FUNDO_TELA);
+    tft.setTextSize(1);
+    tft.setTextColor(cor, COR_FUNDO_TELA);
+    int larguraTexto = texto.length() * 6;
+    int x = (320 - larguraTexto) / 2;
+    if (x < 4) x = 4;
+    tft.setCursor(x, 24);
+    tft.print(texto);
+  }
+}
+
 // Desenha o layout base (molduras, títulos, trilhas dos arcos e botões)
 void desenharLayoutEstatico() {
   if (!tftAtivo) return;
@@ -723,15 +1063,7 @@ void desenharLayoutEstatico() {
   tft.setCursor(55, 6);
   tft.print(F("Dry Fila Box 60L"));
 
-  tft.setTextSize(1);
-  tft.setTextColor(ILI9341_LIGHTGREY, COR_FUNDO_TELA);
-  tft.setCursor(85, 24);
-  if (WiFi.status() == WL_CONNECTED) {
-    tft.print(F("IP: "));
-    tft.print(WiFi.localIP().toString());
-  } else {
-    tft.print(F("Conectando ao Wi-Fi..."));
-  }
+  atualizarCabecalhoStatus(true);
   tft.drawLine(0, 34, 320, 34, 0x39E7);
 
   // Rótulos e Unidades dos 3 Mostradores
@@ -873,7 +1205,18 @@ void processarTouch() {
   tx = constrain(tx, 0, 319);
   ty = constrain(ty, 0, 239);
 
-  // Zona dos botões inferiores (Y: 175 a 230)
+  // 1. Zona do Cabeçalho Superior (Y: 0 a 35) -> Alterna Modo AP / Wi-Fi
+  if (ty <= 35) {
+    lastTouchTime = millis();
+    if (modoAPAtivo) {
+      desativarModoAP();
+    } else {
+      iniciarModoAP();
+    }
+    return;
+  }
+
+  // 2. Zona dos botões inferiores (Y: 175 a 230)
   if (ty >= 175 && ty <= 230) {
     lastTouchTime = millis();
 
@@ -894,13 +1237,44 @@ void processarTouch() {
 }
 
 // =====================================================================================
-//  11. RECONEXÃO MQTT NÃO-BLOQUEANTE
+//  11. VERIFICAÇÃO DE REDE E RECONEXÃO MQTT NÃO-BLOQUEANTE
 // =====================================================================================
+void verificarStatusWifi() {
+  if (!wifiConfigurado) return; // Em modo offline puro, não executa verificações de rede
+
+  static unsigned long ultimaVerificacao = 0;
+  unsigned long agora = millis();
+
+  if (agora - ultimaVerificacao >= 1000) {
+    ultimaVerificacao = agora;
+    bool conectado = (WiFi.status() == WL_CONNECTED);
+
+    if (conectado != ultimoStatusWifiConectado) {
+      ultimoStatusWifiConectado = conectado;
+      if (conectado) {
+        Serial.print(F("[WIFI] Conectado com sucesso! IP: "));
+        Serial.println(WiFi.localIP());
+      } else {
+        Serial.println(F("[WIFI] Conexão Wi-Fi perdida."));
+      }
+      atualizarCabecalhoStatus();
+    }
+
+    // Se estiver desconectado por mais de 30s, tenta reconectar sem travar
+    if (!conectado && (agora - ultimaTentativaWifi >= 30000)) {
+      ultimaTentativaWifi = agora;
+      Serial.println(F("[WIFI] Tentando reconectar à rede salva..."));
+      WiFi.reconnect();
+    }
+  }
+}
+
 void verificarMqtt() {
   if (WiFi.status() == WL_CONNECTED && !mqttClient.connected()) {
     unsigned long agora = millis();
     if (agora - ultimaTentativaMqtt > 10000) {
       ultimaTentativaMqtt = agora;
+      mqttClient.setServer(mqttBroker.c_str(), MQTT_PORT);
       if (mqttClient.connect("Drybox60L_ESP32")) {
         Serial.println(F("[MQTT] Conectado com sucesso ao Broker!"));
       }
@@ -956,21 +1330,50 @@ void setup() {
   shtOutOk = sht_out.begin(0x45);
   if (!shtOutOk) Serial.println(F("[ERRO] Sensor SHT31 Externo (0x45) ausente!"));
 
-  // Inicializa Conexão Wi-Fi
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  Serial.print(F("[WIFI] Conectando a "));
-  Serial.println(WIFI_SSID);
+  // Recupera configurações da memória Flash NVS
+  preferences.begin("drybox_cfg", false);
+  wifiSSID = preferences.getString("ssid", "");
+  wifiPassword = preferences.getString("pass", "");
+  mqttBroker = preferences.getString("mqtt", "192.168.1.100");
+  preferences.end();
 
   // Inicia Rotas HTTP
   server.on("/", HTTP_GET, handleRoot);
   server.on("/api/status", HTTP_GET, handleStatusJson);
   server.on("/api/action", HTTP_GET, handleAction);
+  server.on("/api/reset_wifi", HTTP_POST, handleResetWifi);
+  server.on("/wifi/save", HTTP_POST, handlePortalSave);
+  server.on("/wifi/exit", HTTP_GET, handlePortalExit);
+
+  // Rotas de detecção de Captive Portal para smartphones (iOS, Android, Windows)
+  server.on("/hotspot-detect.html", handleCaptivePortal);
+  server.on("/generate_204", handleCaptivePortal);
+  server.on("/gen_204", handleCaptivePortal);
+  server.on("/ncsi.txt", handleCaptivePortal);
+  server.onNotFound(handleCaptivePortal);
+
   server.begin();
   Serial.println(F("[HTTP] Servidor Web iniciado na porta 80."));
 
   // Configuração MQTT
-  mqttClient.setServer(MQTT_BROKER, MQTT_PORT);
+  mqttClient.setServer(mqttBroker.c_str(), MQTT_PORT);
+
+  // Inicialização Wi-Fi 100% não-bloqueante
+  if (wifiSSID.length() > 0) {
+    wifiConfigurado = true;
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(wifiSSID.c_str(), wifiPassword.c_str());
+    wifiTentativaInicioMs = millis();
+    Serial.print(F("[WIFI] Conectando a rede salva: "));
+    Serial.println(wifiSSID);
+  } else {
+    wifiConfigurado = false;
+    Serial.println(F("[WIFI] Nenhuma rede configurada. Iniciando em Modo Offline."));
+    Serial.println(F("[WIFI] Toque no topo da tela para abrir o Ponto de Acesso 'Drybox-Setup'."));
+  }
+
+  // Atualiza exibição de status no cabeçalho
+  atualizarCabecalhoStatus(true);
 }
 
 // =====================================================================================
@@ -978,8 +1381,19 @@ void setup() {
 // =====================================================================================
 void loop() {
   server.handleClient();
-  verificarMqtt();
-  if (mqttClient.connected()) mqttClient.loop();
+
+  if (modoAPAtivo) {
+    dnsServer.processNextRequest();
+    if (millis() - apInicioMs >= AP_TIMEOUT_MS) {
+      Serial.println(F("[WIFI] Timeout do modo AP atingido (3 min). Desativando."));
+      desativarModoAP();
+    }
+  } else {
+    verificarStatusWifi();
+    verificarMqtt();
+    if (mqttClient.connected()) mqttClient.loop();
+  }
+
   processarTouch();
 
   unsigned long currentMillis = millis();
